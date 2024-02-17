@@ -21,7 +21,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case "esc":
 		return m, cmdize(menu.DismissSelected{})
 	case "enter":
-		return m, tea.Batch(cmdize(ColorSelected{RGB: m.RGB}), cmdize(menu.DismissSelected{}))
+		return m, cmdize(ColorSelected{RGB: m.RGB})
 	}
 
 	return m, nil

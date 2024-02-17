@@ -26,7 +26,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case color.ColorSelected:
 		m.SelectedColor = msg.RGB
-		return m, nil
+		return m, tea.Quit
 	case tea.KeyMsg:
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
@@ -57,14 +57,14 @@ func main() {
 		Title:       "Green Grass",
 		Description: "Green grows the grass over thy neighbors septic tank",
 		ModelInitFunc: func() (tea.Model, tea.Cmd) {
-			return color.Model{RGB: "#00FF00", Sample: "☘️ Tis the luck of the tarnish ☘️"}, nil
+			return color.Model{RGB: "#00FF00", Sample: "☘️ The luck you make for yourself ☘️"}, nil
 		},
 	}
 	blue := menu.Choice{
-		Title:       "Blue Horseshoes",
-		Description: "A way many a child's heart has been won",
+		Title:       "Blue Shoes",
+		Description: "But did he cry?! No!",
 		ModelInitFunc: func() (tea.Model, tea.Cmd) {
-			return color.Model{RGB: "#0000FF", Sample: "🧿 May it ever guard you 🧿"}, nil
+			return color.Model{RGB: "#0000FF", Sample: "🧿 Never forget what it's like to feel young 🧿"}, nil
 		},
 	}
 
@@ -75,10 +75,11 @@ func main() {
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
-	if _, err := p.Run(); err != nil {
+	result, err := p.Run()
+	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
 
-	log.Printf("You selected the color: %s", m.SelectedColor)
+	log.Printf("You selected the color: %s", result.(model).SelectedColor)
 }
