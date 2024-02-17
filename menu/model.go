@@ -14,7 +14,7 @@ type Closable interface {
 
 type Choice struct {
 	Title         string
-	Descrption    string
+	Description   string
 	ModelInitFunc func() (tea.Model, tea.Cmd)
 }
 
@@ -35,22 +35,19 @@ type Model struct {
 	window        *window.Model
 }
 
-// NewMenu setups up a new menu model
-func NewMenu(title string, choices []Choice, selected *Choice, w *window.Model) Model {
-	if w == nil {
-		w = &window.Model{}
-	}
-
+// New setups up a new menu model
+func New(title string, choices []Choice, selected *Choice, width int, height int) Model {
 	delegation := list.NewDefaultDelegate()
 	items := make([]list.Item, len(choices))
 	for i, choice := range choices {
-		items[i] = choiceItem{title: choice.Title, desc: choice.Descrption, key: choice}
+		items[i] = choiceItem{title: choice.Title, desc: choice.Description, key: choice}
 	}
 
 	model := Model{
 		Choices:  choices,
-		list:     list.New(items, delegation, w.Width, w.Height),
+		list:     list.New(items, delegation, width, height),
 		Selected: selected,
+		window:   &window.Model{Width: width, Height: height},
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -127,6 +124,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil // should never get here
+}
+
+func (m *Model) SetSize(w int, h int) {
+	m.window.Width = w
+	m.window.Height = h
+	m.list.SetSize(w, h)
 }
 
 func (m Model) View() string {
