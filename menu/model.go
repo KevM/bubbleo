@@ -27,22 +27,24 @@ type Model struct {
 	Choices  []Choice
 	list     list.Model
 	navstack *navstack.Model
+
+	selected *Choice
 }
 
-// New setups up a new menu model
-func New(title string, choices []Choice, selected *Choice, width int, height int) Model {
+// New setups up a new menu model. If no navstack is provided a new one will be created.
+// navstack is optional and used to route update/views to the top of the navstack when a selection is made
+func New(title string, choices []Choice, selected *Choice, ns *navstack.Model) Model {
 	delegation := list.NewDefaultDelegate()
 	items := make([]list.Item, len(choices))
 	for i, choice := range choices {
 		items[i] = choiceItem{title: choice.Title, desc: choice.Description, key: choice}
 	}
 
-	navstack := navstack.New()
-
 	model := Model{
 		Choices:  choices,
-		list:     list.New(items, delegation, width, height),
-		navstack: &navstack,
+		list:     list.New(items, delegation, 0, 0),
+		navstack: ns,
+		selected: selected,
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -72,22 +74,33 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
+func (m Model) RouteToNavstack() bool {
+	return m.selected != nil && m.navstack != nil && m.navstack.Top() != nil
+}
+
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	if m.navstack.Top() != nil {
+	if m.RouteToNavstack() {
 		cmd := m.navstack.Update(msg)
 		return m, cmd
 	}
 
 	switch msg := msg.(type) {
+	case navstack.PopNavigation, navstack.PushNavigation, navstack.ReloadCurrent:
+		// route navstack messages to the navstack
+		cmd := m.navstack.Update(msg)
+		return m, cmd
 	case tea.KeyMsg:
 		switch msg.String() {
+		case tea.KeyEsc.String():
+			cmd := m.navstack.Pop()
+			return m, cmd
 		case tea.KeyEnter.String():
 			choice, ok := m.list.SelectedItem().(choiceItem)
 			if ok {
-				choice.key.Model.Init()
+				m.selected = &choice.key
 				item := navstack.NavigationItem{Title: choice.title, Model: choice.key.Model}
-				cmd := m.navstack.Push(item)
+				cmd := cmdize(navstack.PushNavigation{Item: item})
 				return m, cmd
 			}
 		}
@@ -105,7 +118,7 @@ func (m *Model) SetSize(w int, h int) {
 
 func (m Model) View() string {
 
-	if m.navstack.Top() != nil {
+	if m.RouteToNavstack() {
 		return m.navstack.View()
 	}
 
@@ -115,4 +128,10 @@ func (m Model) View() string {
 	}
 
 	return ""
+}
+
+func cmdize[T any](t T) tea.Cmd {
+	return func() tea.Msg {
+		return t
+	}
 }
