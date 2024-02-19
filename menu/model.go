@@ -78,7 +78,7 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
+	switch msg.(type) {
 	case ReloadSelected:
 		if m.Selected != nil {
 			s := *m.Selected
@@ -90,40 +90,34 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// TODO handle err
 		m.Clear()
 		return m, nil
-	case tea.WindowSizeMsg:
-		m.window.Width = msg.Width
-		m.window.Height = msg.Height
-		m.list.SetSize(m.window.Width, m.window.Height)
-	default:
-		if m.SelectedModel != nil {
-			// selection made so route updates to the selected model
-			sm := *m.SelectedModel
-			switch msg := msg.(type) {
-			default:
-				um, cmd := sm.Update(msg)
-				m.SelectedModel = &um
-				return m, cmd
-			}
-		}
-
-		switch msg := msg.(type) {
-		case tea.KeyMsg:
-			switch msg.Type {
-			case tea.KeyEnter:
-				choice, ok := m.list.SelectedItem().(choiceItem)
-				if ok {
-					return m.SelectChoiceCmd(choice.key)
-				}
-			}
-		}
-
-		// No selection made yet so update the list
-		var cmd tea.Cmd
-		m.list, cmd = m.list.Update(msg)
-		return m, cmd
 	}
 
-	return m, nil // should never get here
+	if m.SelectedModel != nil {
+		// selection made so route updates to the selected model
+		sm := *m.SelectedModel
+		switch msg := msg.(type) {
+		default:
+			um, cmd := sm.Update(msg)
+			m.SelectedModel = &um
+			return m, cmd
+		}
+	}
+
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.Type {
+		case tea.KeyEnter:
+			choice, ok := m.list.SelectedItem().(choiceItem)
+			if ok {
+				return m.SelectChoiceCmd(choice.key)
+			}
+		}
+	}
+
+	// No selection made yet so update the list
+	var cmd tea.Cmd
+	m.list, cmd = m.list.Update(msg)
+	return m, cmd
 }
 
 func (m *Model) SetSize(w int, h int) {
@@ -142,7 +136,7 @@ func (m Model) View() string {
 
 	// display menu if choices are present.
 	if len(m.Choices) > 0 {
-		return styles.AppStyle.Render(m.list.View())
+		return "\n" + m.list.View()
 	}
 
 	return ""

@@ -11,7 +11,7 @@ import (
 	"github.com/kevm/bubbleo/menu"
 )
 
-var docStyle = lipgloss.NewStyle().Margin(1, 2)
+var docStyle = lipgloss.NewStyle()
 
 type model struct {
 	SelectedColor string
@@ -34,6 +34,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
 		m.menu.SetSize(msg.Width-h, msg.Height-v)
+		return m, nil
 	}
 
 	updatedmenu, cmd := m.menu.Update(msg)
@@ -71,7 +72,7 @@ func main() {
 	choices := []menu.Choice{red, green, blue}
 
 	title := "Colorful Choices"
-	m := model{menu: menu.New(title, choices, nil, 80, 25)}
+	m := model{menu: menu.New(title, choices, nil, 80, 20)}
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
