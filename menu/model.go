@@ -4,18 +4,14 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/kevm/bubbleo/navstack"
 	"github.com/kevm/bubbleo/styles"
-	"github.com/kevm/bubbleo/window"
 )
 
-type Closable interface {
-	Close() error
-}
-
 type Choice struct {
-	Title         string
-	Description   string
-	ModelInitFunc func() (tea.Model, tea.Cmd)
+	Title       string
+	Description string
+	Model       tea.Model
 }
 
 type choiceItem struct {
@@ -28,11 +24,9 @@ func (i choiceItem) Description() string { return i.desc }
 func (i choiceItem) FilterValue() string { return i.title + i.desc }
 
 type Model struct {
-	Choices       []Choice
-	Selected      *Choice
-	SelectedModel *tea.Model
-	list          list.Model
-	window        *window.Model
+	Choices  []Choice
+	list     list.Model
+	navstack *navstack.Model
 }
 
 // New setups up a new menu model
@@ -43,11 +37,12 @@ func New(title string, choices []Choice, selected *Choice, width int, height int
 		items[i] = choiceItem{title: choice.Title, desc: choice.Description, key: choice}
 	}
 
+	navstack := navstack.New()
+
 	model := Model{
 		Choices:  choices,
 		list:     list.New(items, delegation, width, height),
-		Selected: selected,
-		window:   &window.Model{Width: width, Height: height},
+		navstack: &navstack,
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -78,38 +73,22 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg.(type) {
-	case ReloadSelected:
-		if m.Selected != nil {
-			s := *m.Selected
-			// TODO handle err
-			m.Clear()
-			return m.SelectChoiceCmd(s)
-		}
-	case DismissSelected:
-		// TODO handle err
-		m.Clear()
-		return m, nil
-	}
 
-	if m.SelectedModel != nil {
-		// selection made so route updates to the selected model
-		sm := *m.SelectedModel
-		switch msg := msg.(type) {
-		default:
-			um, cmd := sm.Update(msg)
-			m.SelectedModel = &um
-			return m, cmd
-		}
+	if m.navstack.Top() != nil {
+		cmd := m.navstack.Update(msg)
+		return m, cmd
 	}
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyEnter:
+		switch msg.String() {
+		case tea.KeyEnter.String():
 			choice, ok := m.list.SelectedItem().(choiceItem)
 			if ok {
-				return m.SelectChoiceCmd(choice.key)
+				choice.key.Model.Init()
+				item := navstack.NavigationItem{Title: choice.title, Model: choice.key.Model}
+				cmd := m.navstack.Push(item)
+				return m, cmd
 			}
 		}
 	}
@@ -121,17 +100,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) SetSize(w int, h int) {
-	m.window.Width = w
-	m.window.Height = h
 	m.list.SetSize(w, h)
 }
 
 func (m Model) View() string {
 
-	if m.SelectedModel != nil {
-		// selection made so route view to the selected model
-		sm := *m.SelectedModel
-		return sm.View()
+	if m.navstack.Top() != nil {
+		return m.navstack.View()
 	}
 
 	// display menu if choices are present.
@@ -140,31 +115,4 @@ func (m Model) View() string {
 	}
 
 	return ""
-}
-
-// SelectChoiceCmd selects the given choice.
-// It returns the new model and potentially an initialize command to run.
-func (m Model) SelectChoiceCmd(choice Choice) (tea.Model, tea.Cmd) {
-	selectedModel, cmd := choice.ModelInitFunc()
-	m.SelectedModel = &selectedModel
-	m.Selected = &choice
-
-	return m, cmd
-}
-
-// Clear the selected choice and close the model if it is closable
-func (m *Model) Clear() error {
-
-	var err error
-
-	if m.SelectedModel != nil {
-		sm := *m.SelectedModel
-		if c, ok := sm.(Closable); ok {
-			err = c.Close()
-		}
-	}
-	m.Selected = nil
-	m.SelectedModel = nil
-
-	return err
 }

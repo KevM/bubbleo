@@ -1,7 +1,11 @@
 package navstack
 
-// Reload is a message that can be sent to the menu model to reload the currently selected menu choice
-type Reload struct{}
+// ReloadCurrent is a message that can be sent to the menu model to reload the currently selected menu choice
+type ReloadCurrent struct{}
 
-// Dismiss is a message that can be sent to the menu model to de-select the currently selected menu choice
-type Dismiss struct{}
+// PopNavigation is a message that can be sent to the menu model to de-select the currently selected menu choice
+type PopNavigation struct{}
+
+type PushNavigation struct {
+	Item NavigationItem
+}

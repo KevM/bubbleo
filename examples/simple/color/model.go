@@ -3,7 +3,7 @@ package color
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kevm/bubbleo/menu"
+	"github.com/kevm/bubbleo/navstack"
 )
 
 type Model struct {
@@ -19,7 +19,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg.(tea.KeyMsg).String() {
 	case "esc":
-		return m, cmdize(menu.DismissSelected{})
+		return m, cmdize(navstack.PopNavigation{})
 	case "enter":
 		return m, cmdize(ColorSelected{RGB: m.RGB})
 	}

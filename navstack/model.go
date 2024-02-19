@@ -20,28 +20,28 @@ func New() Model {
 	return model
 }
 
-func (m Model) Push(item NavigationItem) (tea.Model, tea.Cmd) {
+func (m *Model) Push(item NavigationItem) tea.Cmd {
 	m.stack = append(m.stack, item)
-	return m, item.Init()
+	return item.Init()
 }
 
-func (m Model) Pop() (tea.Model, tea.Cmd) {
+func (m *Model) Pop() tea.Cmd {
 	top := m.Top()
 	if top == nil {
-		return m, nil
+		return nil
 	}
 
-	if c, ok := top.model.(Closable); ok {
+	if c, ok := top.Model.(Closable); ok {
 		c.Close()
 	}
 
 	m.stack = m.stack[:len(m.stack)-1]
 	top = m.Top()
 	if top == nil {
-		return m, nil
+		return nil
 	}
 
-	return m, top.Init()
+	return top.Init()
 }
 
 func (m Model) Top() *NavigationItem {
@@ -53,29 +53,29 @@ func (m Model) Top() *NavigationItem {
 	return &top
 }
 
-func (m Model) Init() tea.Cmd {
-	return nil
-}
-
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	top := m.Top()
-	switch msg.(type) {
-	case Reload:
+	switch msg := msg.(type) {
+	case ReloadCurrent:
 		if top == nil {
-			return m, nil
+			return nil
 		}
-		return m, top.Init()
-	case Dismiss:
-		return m.Pop()
+		return top.Init()
+	case PopNavigation:
+		cmd := m.Pop()
+		return cmd
+	case PushNavigation:
+		cmd := m.Push(msg.Item)
+		return cmd
 	}
 
 	if top == nil {
-		return m, nil
+		return nil
 	}
 
 	um, cmd := top.Update(msg)
 	m.stack[len(m.stack)-1] = um.(NavigationItem)
-	return m, cmd
+	return cmd
 }
 
 func (m Model) View() string {

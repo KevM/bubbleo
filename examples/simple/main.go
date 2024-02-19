@@ -50,23 +50,19 @@ func main() {
 	red := menu.Choice{
 		Title:       "Red Envy",
 		Description: "Raindrops on roses",
-		ModelInitFunc: func() (tea.Model, tea.Cmd) {
-			return color.Model{RGB: "#FF0000", Sample: "❤️ Love makes the world go around ❤️"}, nil
-		},
+		Model:       color.Model{RGB: "#FF0000", Sample: "❤️ Love makes the world go around ❤️"},
 	}
+
 	green := menu.Choice{
 		Title:       "Green Grass",
 		Description: "Green grows the grass over thy neighbors septic tank",
-		ModelInitFunc: func() (tea.Model, tea.Cmd) {
-			return color.Model{RGB: "#00FF00", Sample: "☘️ The luck you make for yourself ☘️"}, nil
-		},
+		Model:       color.Model{RGB: "#00FF00", Sample: "☘️ The luck you make for yourself ☘️"},
 	}
+
 	blue := menu.Choice{
 		Title:       "Blue Shoes",
 		Description: "But did he cry?! No!",
-		ModelInitFunc: func() (tea.Model, tea.Cmd) {
-			return color.Model{RGB: "#0000FF", Sample: "🧿 Never forget what it's like to feel young 🧿"}, nil
-		},
+		Model:       color.Model{RGB: "#0000FF", Sample: "🧿 Never forget what it's like to feel young 🧿"},
 	}
 
 	choices := []menu.Choice{red, green, blue}
