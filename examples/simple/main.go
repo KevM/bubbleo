@@ -75,8 +75,8 @@ func main() {
 	choices := []menu.Choice{red, green, blue}
 
 	title := "Colorful Choices"
-	ns := navstack.New()
 	w := window.New(10, 20, 6)
+	ns := navstack.New(&w)
 	m := model{
 		menu:   menu.New(title, choices, nil, &w),
 		window: &w,

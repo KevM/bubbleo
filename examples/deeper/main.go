@@ -57,7 +57,7 @@ func (m model) View() string {
 
 func main() {
 	w := window.New(10, 20, 6)
-	ns := navstack.New()
+	ns := navstack.New(&w)
 	artists := data.GetArtists()
 	choices := make([]menu.Choice, len(artists))
 	for i, a := range artists {

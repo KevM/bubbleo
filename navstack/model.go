@@ -2,6 +2,7 @@ package navstack
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/kevm/bubbleo/window"
 )
 
 type Closable interface {
@@ -9,12 +10,14 @@ type Closable interface {
 }
 
 type Model struct {
-	stack []NavigationItem
+	stack  []NavigationItem
+	window *window.Model
 }
 
-func New() Model {
+func New(w *window.Model) Model {
 	model := Model{
-		stack: []NavigationItem{},
+		stack:  []NavigationItem{},
+		window: w,
 	}
 
 	return model
@@ -30,8 +33,12 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m *Model) Push(item NavigationItem) tea.Cmd {
+
+	nim, cmd := item.Model.Update(tea.WindowSizeMsg{Width: m.window.Width, Height: m.window.Height - m.window.TopOffset})
+	item.Model = nim
+
 	m.stack = append(m.stack, item)
-	return item.Init()
+	return tea.Batch(cmd, item.Init())
 }
 
 func (m *Model) Pop() tea.Cmd {
@@ -44,13 +51,18 @@ func (m *Model) Pop() tea.Cmd {
 		c.Close()
 	}
 
+	cmds := []tea.Cmd{}
+	nim, cmd := top.Model.Update(tea.WindowSizeMsg{Width: m.window.Width, Height: m.window.Height - m.window.TopOffset})
+	top.Model = nim
+	cmds = append(cmds, cmd, top.Init())
+
 	m.stack = m.stack[:len(m.stack)-1]
 	top = m.Top()
 	if top == nil {
 		return tea.Quit
 	}
 
-	return top.Init()
+	return tea.Batch(cmds...)
 }
 
 func (m Model) Top() *NavigationItem {
