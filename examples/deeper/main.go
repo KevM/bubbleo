@@ -20,7 +20,6 @@ type model struct {
 	SelectedArtist string
 	SelectedColor  string
 	menu           menu.Model
-	window         *window.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -37,13 +36,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
-	case tea.WindowSizeMsg:
-		h, v := docStyle.GetFrameSize()
-		m.window.Height = msg.Height
-		m.window.Width = msg.Width - h
-		m.window.TopOffset = v
-		m.menu.SetSize(m.window)
-		return m, nil
 	}
 
 	updatedmenu, cmd := m.menu.Update(msg)
@@ -56,7 +48,9 @@ func (m model) View() string {
 }
 
 func main() {
-	w := window.New(10, 20, 6)
+
+	top, side := docStyle.GetFrameSize()
+	w := window.New(120, 25, top, side)
 	ns := navstack.New(&w)
 	artists := data.GetArtists()
 	choices := make([]menu.Choice, len(artists))
@@ -64,14 +58,13 @@ func main() {
 		choices[i] = menu.Choice{
 			Title:       a.Name,
 			Description: a.Description,
-			Model:       artistcolors.New(a, &w),
+			Model:       artistcolors.New(a),
 		}
 	}
 
 	title := "Choose an Artist:"
 	m := model{
-		menu:   menu.New(title, choices, nil, &w),
-		window: &w,
+		menu: menu.New(title, choices, nil),
 	}
 
 	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})

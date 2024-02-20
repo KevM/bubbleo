@@ -34,7 +34,7 @@ func (m Model) Init() tea.Cmd {
 
 func (m *Model) Push(item NavigationItem) tea.Cmd {
 
-	nim, cmd := item.Model.Update(tea.WindowSizeMsg{Width: m.window.Width, Height: m.window.Height - m.window.TopOffset})
+	nim, cmd := item.Model.Update(m.window.GetWindowSizeMsg())
 	item.Model = nim
 
 	m.stack = append(m.stack, item)
@@ -52,7 +52,7 @@ func (m *Model) Pop() tea.Cmd {
 	}
 
 	cmds := []tea.Cmd{}
-	nim, cmd := top.Model.Update(tea.WindowSizeMsg{Width: m.window.Width, Height: m.window.Height - m.window.TopOffset})
+	nim, cmd := top.Model.Update(m.window.GetWindowSizeMsg())
 	top.Model = nim
 	cmds = append(cmds, cmd, top.Init())
 
@@ -77,6 +77,9 @@ func (m Model) Top() *NavigationItem {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	top := m.Top()
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.window.Height = msg.Height
+		m.window.Width = msg.Width
 	case ReloadCurrent:
 		if top == nil {
 			return m, nil

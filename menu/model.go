@@ -6,7 +6,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/kevm/bubbleo/navstack"
 	"github.com/kevm/bubbleo/styles"
-	"github.com/kevm/bubbleo/window"
 )
 
 type Choice struct {
@@ -29,11 +28,10 @@ type Model struct {
 	list    list.Model
 
 	selected *Choice
-	window   *window.Model
 }
 
 // New setups up a new menu model
-func New(title string, choices []Choice, selected *Choice, window *window.Model) Model {
+func New(title string, choices []Choice, selected *Choice) Model {
 	delegation := list.NewDefaultDelegate()
 	items := make([]list.Item, len(choices))
 	selectedIndex := -1
@@ -45,11 +43,9 @@ func New(title string, choices []Choice, selected *Choice, window *window.Model)
 	}
 
 	model := Model{
-		Choices: choices,
-		list:    list.New(items, delegation, 120, 20),
-		// navstack: ns,
+		Choices:  choices,
+		list:     list.New(items, delegation, 120, 20),
 		selected: selected,
-		window:   window,
 	}
 
 	if selected != nil {
@@ -66,7 +62,7 @@ func New(title string, choices []Choice, selected *Choice, window *window.Model)
 	model.list.SetShowHelp(false)
 
 	//TODO: figure out height long term.
-	model.list.SetSize(window.Width, window.Height-window.TopOffset)
+	// model.list.SetSize(window.Width, window.Height-window.TopOffset)
 
 	chooseKeyBinding := key.NewBinding(
 		key.WithKeys("enter"),
@@ -89,6 +85,8 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.SetSize(msg)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case tea.KeyEsc.String():
@@ -111,8 +109,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *Model) SetSize(w *window.Model) {
-	m.list.SetSize(w.Width, w.Height-w.TopOffset)
+func (m *Model) SetSize(w tea.WindowSizeMsg) {
+	m.list.SetSize(w.Width, w.Height)
 }
 
 func (m Model) View() string {

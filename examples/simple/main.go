@@ -36,11 +36,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
-		h, v := docStyle.GetFrameSize()
-		m.window.Height = msg.Height
-		m.window.Width = msg.Width - h
-		m.window.TopOffset = v
-		m.menu.SetSize(m.window)
+		// h, v := docStyle.GetFrameSize()
+		// m.window.Height = msg.Height
+		// m.window.Width = msg.Width - h
+		// m.window.TopOffset = v
+		m.menu.SetSize(msg)
 		return m, nil
 	}
 
@@ -75,10 +75,11 @@ func main() {
 	choices := []menu.Choice{red, green, blue}
 
 	title := "Colorful Choices"
-	w := window.New(10, 20, 6)
+	top, side := docStyle.GetFrameSize()
+	w := window.New(120, 25, top, side)
 	ns := navstack.New(&w)
 	m := model{
-		menu:   menu.New(title, choices, nil, &w),
+		menu:   menu.New(title, choices, nil),
 		window: &w,
 	}
 	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})

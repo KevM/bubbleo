@@ -3,16 +3,18 @@ package window
 import tea "github.com/charmbracelet/bubbletea"
 
 type Model struct {
-	Width     int
-	Height    int
-	TopOffset int
+	Width      int
+	Height     int
+	TopOffset  int
+	SideOffset int
 }
 
-func New(width, height, topOffset int) Model {
+func New(width, height, topOffset int, sideOffset int) Model {
 	return Model{
-		Width:     width,
-		Height:    height,
-		TopOffset: topOffset,
+		Width:      width,
+		Height:     height,
+		TopOffset:  topOffset,
+		SideOffset: sideOffset,
 	}
 }
 
@@ -31,4 +33,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m Model) View() string {
 	return ""
+}
+
+func (m Model) GetWindowSizeMsg() tea.WindowSizeMsg {
+	return tea.WindowSizeMsg{Width: m.Width - m.SideOffset, Height: m.Height - m.TopOffset}
 }
