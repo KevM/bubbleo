@@ -10,7 +10,7 @@
       "debugAdapter": "dlv-dap",
       "request": "attach",
       "mode": "remote",
-      "remotePath": "${workspaceFolder}/examples/simple",
+      "remotePath": "${workspaceFolder}/examples/simple/",
       "port": 2345,
       "host": "127.0.0.1",
       "preLaunchTask": "Run simple headless dlv" // Here !
@@ -21,7 +21,7 @@
         "debugAdapter": "dlv-dap",
         "request": "attach",
         "mode": "remote",
-        "remotePath": "${workspaceFolder}/examples/deeper",
+        "remotePath": "${workspaceFolder}/examples/deeper/",
         "port": 2345,
         "host": "127.0.0.1",
         "preLaunchTask": "Run deeper headless dlv" // Here !

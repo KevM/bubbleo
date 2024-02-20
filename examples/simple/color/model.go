@@ -16,14 +16,19 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-
-	switch msg.(tea.KeyMsg).String() {
-	case "esc":
-		pop := cmdize(navstack.PopNavigation{})
-		selected := cmdize(ColorSelected{m.RGB})
-		return m, tea.Sequence(pop, selected)
-	case "ctrl+c":
-		return m, tea.Quit
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "esc":
+			pop := cmdize(navstack.PopNavigation{})
+			return m, pop
+		case "enter":
+			pop := cmdize(navstack.PopNavigation{})
+			selected := cmdize(ColorSelected{m.RGB})
+			return m, tea.Sequence(pop, selected)
+		case "ctrl+c":
+			return m, tea.Quit
+		}
 	}
 
 	return m, nil
