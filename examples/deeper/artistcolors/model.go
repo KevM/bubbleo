@@ -11,13 +11,13 @@ import (
 
 type Model struct {
 	Artist data.Artist
-	Nav    *navstack.Model
+	// Nav    *navstack.Model
 
 	menu   menu.Model
 	window *window.Model
 }
 
-func New(a data.Artist, n *navstack.Model, window *window.Model) Model {
+func New(a data.Artist, window *window.Model) Model {
 
 	choices := []menu.Choice{}
 	for _, p := range a.Paintings {
@@ -34,12 +34,12 @@ func New(a data.Artist, n *navstack.Model, window *window.Model) Model {
 		}
 	}
 
-	menu := menu.New("Artist Colors", choices, nil, window, nil)
+	menu := menu.New("Artist Colors", choices, nil, window)
 	menu.SetSize(window)
 
 	return Model{
 		Artist: a,
-		Nav:    n,
+		// Nav:    n,
 		menu:   menu,
 		window: window,
 	}
@@ -56,9 +56,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.menu.SetSize(m.window)
 	case color.ColorSelected:
-		cmd := cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
 		pop := cmdize(navstack.PopNavigation{})
-		return m, tea.Batch(pop, cmd)
+		cmd := cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
+		return m, tea.Sequence(pop, cmd)
 	}
 
 	updatedmenu, cmd := m.menu.Update(msg)

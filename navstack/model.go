@@ -20,6 +20,15 @@ func New() Model {
 	return model
 }
 
+func (m Model) Init() tea.Cmd {
+	top := m.Top()
+	if top == nil {
+		return nil
+	}
+
+	return top.Init()
+}
+
 func (m *Model) Push(item NavigationItem) tea.Cmd {
 	m.stack = append(m.stack, item)
 	return item.Init()
@@ -53,29 +62,29 @@ func (m Model) Top() *NavigationItem {
 	return &top
 }
 
-func (m *Model) Update(msg tea.Msg) tea.Cmd {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	top := m.Top()
 	switch msg := msg.(type) {
 	case ReloadCurrent:
 		if top == nil {
-			return nil
+			return m, nil
 		}
-		return top.Init()
+		return m, top.Init()
 	case PopNavigation:
 		cmd := m.Pop()
-		return cmd
+		return m, cmd
 	case PushNavigation:
 		cmd := m.Push(msg.Item)
-		return cmd
+		return m, cmd
 	}
 
 	if top == nil {
-		return nil
+		return m, nil
 	}
 
-	cmd := top.Update(msg)
-	// m.stack[len(m.stack)-1] = um.(NavigationItem)
-	return cmd
+	um, cmd := top.Update(msg)
+	m.stack[len(m.stack)-1] = um.(NavigationItem)
+	return m, cmd
 }
 
 func (m Model) View() string {

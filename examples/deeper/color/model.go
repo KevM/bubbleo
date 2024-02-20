@@ -23,7 +23,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			return m, cmdize(navstack.PopNavigation{})
 		case "enter":
-			return m, tea.Batch(cmdize(navstack.PopNavigation{}), cmdize(ColorSelected{RGB: m.RGB}))
+			return m, tea.Sequence(cmdize(navstack.PopNavigation{}), cmdize(ColorSelected{RGB: m.RGB}))
 		}
 	}
 

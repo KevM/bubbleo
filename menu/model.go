@@ -25,9 +25,9 @@ func (i choiceItem) Description() string { return i.desc }
 func (i choiceItem) FilterValue() string { return i.title + i.desc }
 
 type Model struct {
-	Choices  []Choice
-	list     list.Model
-	navstack *navstack.Model
+	Choices []Choice
+	list    list.Model
+	// navstack *navstack.Model
 
 	selected *Choice
 	window   *window.Model
@@ -35,7 +35,7 @@ type Model struct {
 
 // New setups up a new menu model. If no navstack is provided a new one will be created.
 // navstack is optional and used to route update/views to the top of the navstack when a selection is made
-func New(title string, choices []Choice, selected *Choice, window *window.Model, ns *navstack.Model) Model {
+func New(title string, choices []Choice, selected *Choice, window *window.Model) Model {
 	delegation := list.NewDefaultDelegate()
 	items := make([]list.Item, len(choices))
 	for i, choice := range choices {
@@ -43,9 +43,9 @@ func New(title string, choices []Choice, selected *Choice, window *window.Model,
 	}
 
 	model := Model{
-		Choices:  choices,
-		list:     list.New(items, delegation, 120, 20),
-		navstack: ns,
+		Choices: choices,
+		list:    list.New(items, delegation, 120, 20),
+		// navstack: ns,
 		selected: selected,
 		window:   window,
 	}
@@ -80,23 +80,23 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) RouteToNavstack() bool {
-	return m.selected != nil && m.navstack != nil && m.navstack.Top() != nil
-}
+// func (m Model) RouteToNavstack() bool {
+// 	return m.selected != nil && m.navstack != nil && m.navstack.Top() != nil
+// }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	if m.RouteToNavstack() {
-		cmd := m.navstack.Update(msg)
-		return m, cmd
-	}
+	// if m.RouteToNavstack() {
+	// 	cmd := m.navstack.Update(msg)
+	// 	return m, cmd
+	// }
 
 	switch msg := msg.(type) {
-	case navstack.PopNavigation, navstack.PushNavigation, navstack.ReloadCurrent:
-		if m.navstack != nil {
-			cmd := m.navstack.Update(msg)
-			return m, cmd
-		}
+	// case navstack.PopNavigation, navstack.PushNavigation, navstack.ReloadCurrent:
+	// 	if m.navstack != nil {
+	// 		cmd := m.navstack.Update(msg)
+	// 		return m, cmd
+	// 	}
 	case tea.KeyMsg:
 		switch msg.String() {
 		case tea.KeyEsc.String():
@@ -124,9 +124,9 @@ func (m *Model) SetSize(w *window.Model) {
 
 func (m Model) View() string {
 
-	if m.RouteToNavstack() {
-		return m.navstack.View()
-	}
+	// if m.RouteToNavstack() {
+	// 	return m.navstack.View()
+	// }
 
 	// display menu if choices are present.
 	if len(m.Choices) > 0 {

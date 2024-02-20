@@ -64,25 +64,26 @@ func main() {
 		choices[i] = menu.Choice{
 			Title:       a.Name,
 			Description: a.Description,
-			Model:       artistcolors.New(a, &ns, &w),
+			Model:       artistcolors.New(a, &w),
 		}
 	}
 
 	title := "Choose an Artist:"
 	m := model{
-		menu:   menu.New(title, choices, nil, &w, &ns),
+		menu:   menu.New(title, choices, nil, &w),
 		window: &w,
 	}
 
-	p := tea.NewProgram(m, tea.WithAltScreen())
+	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
+	p := tea.NewProgram(ns, tea.WithAltScreen())
 
-	result, err := p.Run()
+	_, err := p.Run()
 	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
 
-	resultModel := result.(model)
+	result := ns.Top().Model.(model)
 
-	log.Printf("You selected the color %s from the artist %s ", resultModel.SelectedColor, resultModel.SelectedArtist)
+	log.Printf("You selected the color %s from the artist %s ", result.SelectedColor, result.SelectedArtist)
 }
