@@ -36,6 +36,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
+	case tea.WindowSizeMsg:
+		m.menu.SetSize(msg)
+		return m, nil
 	}
 
 	updatedmenu, cmd := m.menu.Update(msg)

@@ -18,7 +18,6 @@ var docStyle = lipgloss.NewStyle()
 type model struct {
 	SelectedColor string
 	menu          menu.Model
-	window        *window.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -36,10 +35,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
-		// h, v := docStyle.GetFrameSize()
-		// m.window.Height = msg.Height
-		// m.window.Width = msg.Width - h
-		// m.window.TopOffset = v
 		m.menu.SetSize(msg)
 		return m, nil
 	}
@@ -79,8 +74,7 @@ func main() {
 	w := window.New(120, 25, top, side)
 	ns := navstack.New(&w)
 	m := model{
-		menu:   menu.New(title, choices, nil),
-		window: &w,
+		menu: menu.New(title, choices, nil),
 	}
 	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
 

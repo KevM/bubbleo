@@ -27,15 +27,15 @@ func GetArtists() []Artist {
 				Description: "Guernica is a large 1937 oil painting on canvas by Spanish artist Pablo Picasso. One of Picasso's best known works, Guernica is regarded by many art critics as one of the most moving and powerful anti-war paintings in history.",
 				Colors: []Color{
 					{
-						RGB:    "black",
+						RGB:    "#000000", //black
 						Sample: "Black of the bull's eye facing down a matador it does not see.",
 					},
 					{
-						RGB:    "white",
+						RGB:    "#FFFFFF", //white
 						Sample: "White of the background rendered against the sun.",
 					},
 					{
-						RGB:    "grey",
+						RGB:    "#808080", //grey
 						Sample: "So grey the Spanish Civil War returned to present day.",
 					},
 				},
@@ -52,15 +52,15 @@ func GetArtists() []Artist {
 				Description: "",
 				Colors: []Color{
 					{
-						RGB:    "yellow",
+						RGB:    "#ffff00", //yellow
 						Sample: "The coat and turban have yellow accents with a golden glow.",
 					},
 					{
-						RGB:    "blue",
+						RGB:    "#0000ff", //blue
 						Sample: "Hat's blue and stunning as the model's distain.",
 					},
 					{
-						RGB:    "ochre",
+						RGB:    "#cc7722",
 						Sample: "Skin tones so ochre they burst with sun burn.",
 					},
 				},
@@ -70,11 +70,11 @@ func GetArtists() []Artist {
 				Description: "This captivating painting depicts a young woman standing by an open window, absorbed in reading a letter.",
 				Colors: []Color{
 					{
-						RGB:    "green",
+						RGB:    "#00ff00", //green
 						Sample: "If only the green curtain could speak.",
 					},
 					{
-						RGB:    "red",
+						RGB:    "#ff0000", //red
 						Sample: "The window drapes are the cheeryest thing in the room.",
 					},
 				},
@@ -84,11 +84,11 @@ func GetArtists() []Artist {
 				Description: "The scene exudes domestic tranquility and everyday beauty",
 				Colors: []Color{
 					{
-						RGB:    "yellow",
+						RGB:    "#ffff00",
 						Sample: "Yellow was a popular color for the Dutch.",
 					},
 					{
-						RGB:    "white",
+						RGB:    "#fdfff5",
 						Sample: "There is a milk the color of her bonet",
 					},
 				},
