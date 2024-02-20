@@ -19,7 +19,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg.(tea.KeyMsg).String() {
 	case "esc":
-		return m, cmdize(navstack.PopNavigation{})
+		pop := cmdize(navstack.PopNavigation{})
+		selected := cmdize(ColorSelected{m.RGB})
+		return m, tea.Sequence(pop, selected)
+	case "ctrl+c":
+		return m, tea.Quit
 	}
 
 	return m, nil

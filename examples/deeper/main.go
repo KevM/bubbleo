@@ -77,13 +77,14 @@ func main() {
 	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
 	p := tea.NewProgram(ns, tea.WithAltScreen())
 
-	_, err := p.Run()
+	finalns, err := p.Run()
 	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
 
-	result := ns.Top().Model.(model)
+	// the resulting model is a navstack. With the top model being the one that quit.
+	result := finalns.(navstack.Model).Top().Model.(model)
 
 	log.Printf("You selected the color %s from the artist %s ", result.SelectedColor, result.SelectedArtist)
 }

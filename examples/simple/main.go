@@ -47,11 +47,12 @@ func main() {
 
 	p := tea.NewProgram(ns, tea.WithAltScreen())
 
-	_, err := p.Run()
+	finalns, err := p.Run()
 	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
 
-	log.Printf("You selected the color: %s", ns.Top().Model.(model).SelectedColor)
+	result := finalns.(navstack.Model).Top().Model.(model)
+	log.Printf("You selected the color: %s", result.SelectedColor)
 }
