@@ -37,7 +37,7 @@ func (m *Model) Push(item NavigationItem) tea.Cmd {
 func (m *Model) Pop() tea.Cmd {
 	top := m.Top()
 	if top == nil {
-		return nil
+		return tea.Quit // should not happen
 	}
 
 	if c, ok := top.Model.(Closable); ok {
@@ -47,7 +47,7 @@ func (m *Model) Pop() tea.Cmd {
 	m.stack = m.stack[:len(m.stack)-1]
 	top = m.Top()
 	if top == nil {
-		return nil
+		return tea.Quit
 	}
 
 	return top.Init()

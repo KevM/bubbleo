@@ -31,7 +31,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.SelectedColor = msg.RGB
 		return m, tea.Quit
 	case tea.KeyMsg:
-		if msg.String() == "ctrl+c" {
+		switch msg.String() {
+		case "ctrl+c":
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
@@ -90,6 +91,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	result := finalns.(navstack.Model).Top().Model.(model)
-	log.Printf("You selected the color: %s", result.SelectedColor)
+	topNavItem := finalns.(navstack.Model).Top()
+	if topNavItem == nil {
+		log.Printf("Nothing selected")
+		os.Exit(1)
+	}
+
+	selected := topNavItem.Model.(model)
+	log.Printf("You selected the color: %s", selected.SelectedColor)
 }

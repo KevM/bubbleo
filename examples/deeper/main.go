@@ -84,7 +84,12 @@ func main() {
 	}
 
 	// the resulting model is a navstack. With the top model being the one that quit.
-	result := finalns.(navstack.Model).Top().Model.(model)
+	topNavItem := finalns.(navstack.Model).Top()
+	if topNavItem == nil {
+		log.Printf("Nothing selected")
+		os.Exit(1)
+	}
 
-	log.Printf("You selected the color %s from the artist %s ", result.SelectedColor, result.SelectedArtist)
+	selected := topNavItem.Model.(model)
+	log.Printf("You selected the color %s from the artist %s ", selected.SelectedColor, selected.SelectedArtist)
 }
