@@ -10,6 +10,7 @@ import (
 	"github.com/kevm/bubbleo/examples/simple/color"
 	"github.com/kevm/bubbleo/menu"
 	"github.com/kevm/bubbleo/navstack"
+	"github.com/kevm/bubbleo/window"
 )
 
 var docStyle = lipgloss.NewStyle()
@@ -17,6 +18,7 @@ var docStyle = lipgloss.NewStyle()
 type model struct {
 	SelectedColor string
 	menu          menu.Model
+	window        *window.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -34,7 +36,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
-		m.menu.SetSize(msg.Width-h, msg.Height-v)
+		m.window.Height = msg.Height
+		m.window.Width = msg.Width - h
+		m.window.TopOffset = v
+		m.menu.SetSize(m.window)
 		return m, nil
 	}
 
@@ -70,7 +75,11 @@ func main() {
 
 	title := "Colorful Choices"
 	ns := navstack.New()
-	m := model{menu: menu.New(title, choices, nil, &ns)}
+	w := window.New(10, 20, 6)
+	m := model{
+		menu:   menu.New(title, choices, nil, &w, &ns),
+		window: &w,
+	}
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 

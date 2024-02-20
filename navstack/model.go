@@ -73,8 +73,8 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 		return nil
 	}
 
-	um, cmd := top.Update(msg)
-	m.stack[len(m.stack)-1] = um.(NavigationItem)
+	cmd := top.Update(msg)
+	// m.stack[len(m.stack)-1] = um.(NavigationItem)
 	return cmd
 }
 

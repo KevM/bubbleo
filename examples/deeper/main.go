@@ -11,6 +11,7 @@ import (
 	"github.com/kevm/bubbleo/examples/deeper/data"
 	"github.com/kevm/bubbleo/menu"
 	"github.com/kevm/bubbleo/navstack"
+	"github.com/kevm/bubbleo/window"
 )
 
 var docStyle = lipgloss.NewStyle()
@@ -19,6 +20,7 @@ type model struct {
 	SelectedArtist string
 	SelectedColor  string
 	menu           menu.Model
+	window         *window.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -37,7 +39,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
-		m.menu.SetSize(msg.Width-h, msg.Height-v)
+		m.window.Height = msg.Height
+		m.window.Width = msg.Width - h
+		m.window.TopOffset = v
+		m.menu.SetSize(m.window)
 		return m, nil
 	}
 
@@ -51,6 +56,7 @@ func (m model) View() string {
 }
 
 func main() {
+	w := window.New(10, 20, 6)
 	ns := navstack.New()
 	artists := data.GetArtists()
 	choices := make([]menu.Choice, len(artists))
@@ -58,12 +64,15 @@ func main() {
 		choices[i] = menu.Choice{
 			Title:       a.Name,
 			Description: a.Description,
-			Model:       artistcolors.New(a, &ns),
+			Model:       artistcolors.New(a, &ns, &w),
 		}
 	}
 
 	title := "Choose an Artist:"
-	m := model{menu: menu.New(title, choices, nil, &ns)}
+	m := model{
+		menu:   menu.New(title, choices, nil, &w, &ns),
+		window: &w,
+	}
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 

@@ -3,14 +3,16 @@ package window
 import tea "github.com/charmbracelet/bubbletea"
 
 type Model struct {
-	Width  int
-	Height int
+	Width     int
+	Height    int
+	TopOffset int
 }
 
 func New(width, height, topOffset int) Model {
 	return Model{
-		Width:  width,
-		Height: height,
+		Width:     width,
+		Height:    height,
+		TopOffset: topOffset,
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/kevm/bubbleo/navstack"
 	"github.com/kevm/bubbleo/styles"
+	"github.com/kevm/bubbleo/window"
 )
 
 type Choice struct {
@@ -29,11 +30,12 @@ type Model struct {
 	navstack *navstack.Model
 
 	selected *Choice
+	window   *window.Model
 }
 
 // New setups up a new menu model. If no navstack is provided a new one will be created.
 // navstack is optional and used to route update/views to the top of the navstack when a selection is made
-func New(title string, choices []Choice, selected *Choice, ns *navstack.Model) Model {
+func New(title string, choices []Choice, selected *Choice, window *window.Model, ns *navstack.Model) Model {
 	delegation := list.NewDefaultDelegate()
 	items := make([]list.Item, len(choices))
 	for i, choice := range choices {
@@ -42,9 +44,10 @@ func New(title string, choices []Choice, selected *Choice, ns *navstack.Model) M
 
 	model := Model{
 		Choices:  choices,
-		list:     list.New(items, delegation, 0, 0),
+		list:     list.New(items, delegation, 120, 20),
 		navstack: ns,
 		selected: selected,
+		window:   window,
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -55,6 +58,9 @@ func New(title string, choices []Choice, selected *Choice, ns *navstack.Model) M
 	model.list.SetShowFilter(false)
 	model.list.SetShowStatusBar(false)
 	model.list.SetShowHelp(false)
+
+	//TODO: figure out height long term.
+	model.list.SetSize(window.Width, window.Height-window.TopOffset)
 
 	chooseKeyBinding := key.NewBinding(
 		key.WithKeys("enter"),
@@ -87,14 +93,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case navstack.PopNavigation, navstack.PushNavigation, navstack.ReloadCurrent:
-		// route navstack messages to the navstack
-		cmd := m.navstack.Update(msg)
-		return m, cmd
+		if m.navstack != nil {
+			cmd := m.navstack.Update(msg)
+			return m, cmd
+		}
 	case tea.KeyMsg:
 		switch msg.String() {
 		case tea.KeyEsc.String():
-			cmd := m.navstack.Pop()
-			return m, cmd
+			return m, cmdize(navstack.PopNavigation{})
 		case tea.KeyEnter.String():
 			choice, ok := m.list.SelectedItem().(choiceItem)
 			if ok {
@@ -112,8 +118,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *Model) SetSize(w int, h int) {
-	m.list.SetSize(w, h)
+func (m *Model) SetSize(w *window.Model) {
+	m.list.SetSize(w.Width, w.Height-w.TopOffset)
 }
 
 func (m Model) View() string {

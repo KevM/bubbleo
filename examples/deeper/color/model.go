@@ -17,11 +17,14 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	switch msg.(tea.KeyMsg).String() {
-	case "esc":
-		return m, cmdize(navstack.PopNavigation{})
-	case "enter":
-		return m, cmdize(ColorSelected{RGB: m.RGB})
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "esc":
+			return m, cmdize(navstack.PopNavigation{})
+		case "enter":
+			return m, tea.Batch(cmdize(navstack.PopNavigation{}), cmdize(ColorSelected{RGB: m.RGB}))
+		}
 	}
 
 	return m, nil
