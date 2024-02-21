@@ -2,37 +2,42 @@ Output demo.gif
 
 Require echo
 
-Set Shell "bash"
 Set FontSize 32
-Set Width 2400
-Set Height 1200
+Set Width 1200
+Set Height 600
+Set PlaybackSpeed 0.5
 
+Set Shell bash
 Sleep 1.5s
 Type "go run ."
 Enter
-Sleep 2.5s
+Sleep 1.5s
 Down
 Sleep 1s
 Enter
-Sleep 2s
+Sleep 1.5s
 Down 2
 Sleep 1s
-Down
-Sleep 500ms
+Enter
+Sleep 1s
 Down
 Sleep 1s
+Up
+Sleep 1s
 Enter
-Sleep 1.5s
+Sleep 2s
 Escape
 Sleep 1.5s
-Down
+Up
+Sleep 1s
+Escape
+Up 2
+Sleep 1s
 Enter
-Sleep 1.5s
-Escape 
-Up 3
-Sleep 1.5s
+Down 2
+Sleep 1s
 Enter
 Sleep 2s
 Enter
-Sleep 5s
+Sleep 1s
 
