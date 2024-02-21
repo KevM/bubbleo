@@ -6,13 +6,13 @@ import (
 	"github.com/kevm/bubbleo/examples/deeper/data"
 	"github.com/kevm/bubbleo/menu"
 	"github.com/kevm/bubbleo/navstack"
+	"github.com/kevm/bubbleo/utils"
 )
 
 type Model struct {
 	Artist data.Artist
 
 	menu menu.Model
-	// window *window.Model
 }
 
 func New(a data.Artist) Model {
@@ -33,18 +33,14 @@ func New(a data.Artist) Model {
 	}
 
 	menu := menu.New("Artist Colors", choices, nil)
-	// menu.SetSize(window)
 
 	return Model{
 		Artist: a,
-		// Nav:    n,
-		menu: menu,
-		// window: window,
+		menu:   menu,
 	}
 }
 
 func (m Model) Init() tea.Cmd {
-	// m.menu.SetSize(m.window)
 	return nil
 }
 
@@ -54,8 +50,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.menu.SetSize(msg)
 	case color.ColorSelected:
-		pop := cmdize(navstack.PopNavigation{})
-		cmd := cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
+		pop := utils.Cmdize(navstack.PopNavigation{})
+		cmd := utils.Cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
 		return m, tea.Sequence(pop, cmd)
 	}
 
@@ -66,10 +62,4 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	return m.menu.View()
-}
-
-func cmdize[T any](t T) tea.Cmd {
-	return func() tea.Msg {
-		return t
-	}
 }

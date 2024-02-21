@@ -38,12 +38,14 @@ This example is from the included [menu component](https://github.com/KevM/bubbl
         if ok {
             m.selected = &choice.key
             item := navstack.NavigationItem{Title: choice.title, Model: choice.key.Model}
-            cmd := cmdize(navstack.PushNavigation{Item: item})
+            cmd := utils.Cmdize(navstack.PushNavigation{Item: item})
             return m, cmd
         }
 ```
 
 There is no limit to the depth of the navigation stack. And the stack components may be dynamic based on your application and user needs.
+
+> **Note:** [Cmdize](https://github.com/KevM/bubbleo/tree/main/utils/utils.go) simply wraps the given arg in a `tea.Cmd` (func that returns a `tea.Msg`)
 
 #### Popping the stack
 
@@ -51,8 +53,8 @@ To pop a component off the stack you might do the following in your bubbletea `U
 
 ```go 
 	case color.ColorSelected:
-		pop := cmdize(navstack.PopNavigation{})
-		cmd := cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
+		pop := utils.Cmdize(navstack.PopNavigation{})
+		cmd := utils.Cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
 		return m, tea.Sequence(pop, cmd)
 ```
 

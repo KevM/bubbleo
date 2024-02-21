@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/kevm/bubbleo/navstack"
 	"github.com/kevm/bubbleo/styles"
+	"github.com/kevm/bubbleo/utils"
 )
 
 type Choice struct {
@@ -90,14 +91,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case tea.KeyEsc.String():
-			pop := cmdize(navstack.PopNavigation{})
+			pop := utils.Cmdize(navstack.PopNavigation{})
 			return m, pop
 		case tea.KeyEnter.String():
 			choice, ok := m.list.SelectedItem().(choiceItem)
 			if ok {
 				m.selected = &choice.key
 				item := navstack.NavigationItem{Title: choice.title, Model: choice.key.Model}
-				cmd := cmdize(navstack.PushNavigation{Item: item})
+				cmd := utils.Cmdize(navstack.PushNavigation{Item: item})
 				return m, cmd
 			}
 		}
@@ -120,10 +121,4 @@ func (m Model) View() string {
 	}
 
 	return ""
-}
-
-func cmdize[T any](t T) tea.Cmd {
-	return func() tea.Msg {
-		return t
-	}
 }

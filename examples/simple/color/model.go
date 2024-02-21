@@ -4,6 +4,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/kevm/bubbleo/navstack"
+	"github.com/kevm/bubbleo/utils"
 )
 
 type Model struct {
@@ -20,11 +21,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
-			pop := cmdize(navstack.PopNavigation{})
+			pop := utils.Cmdize(navstack.PopNavigation{})
 			return m, pop
 		case "enter":
-			pop := cmdize(navstack.PopNavigation{})
-			selected := cmdize(ColorSelected{m.RGB})
+			pop := utils.Cmdize(navstack.PopNavigation{})
+			selected := utils.Cmdize(ColorSelected{m.RGB})
 			return m, tea.Sequence(pop, selected)
 		case "ctrl+c":
 			return m, tea.Quit
@@ -40,10 +41,4 @@ func (m Model) View() string {
 		Render(m.Sample)
 
 	return sample + "\n\n\n\n\n" + "enter: select, esc: back\n"
-}
-
-func cmdize[T any](t T) tea.Cmd {
-	return func() tea.Msg {
-		return t
-	}
 }
