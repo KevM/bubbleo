@@ -1,6 +1,6 @@
 # BubbleO
 
-BubbleO is a collection of components for bubbletea. 
+BubbleO is a collection of components for the excellent terminal UI tool [bubbletea](https://github.com/charmbracelet/bubbletea). 
 
 ## [Navstack](https://github.com/KevM/bubbleo/blob/main/navstack/model.go)
 
@@ -26,11 +26,11 @@ Popping the stack will remove the topmost navigation item from the stack.
 
 ### Navigation 
 
-Navigation is accomplished by you components when they publish messages like `navstack.PushNavigation{}` or `navstack.PopNavigation{}`.
+Navigation is accomplished by your components when they publish messages like `navstack.PushNavigation{}` or `navstack.PopNavigation{}`.
 
 #### Pushing a new component onto the stack
 
-This example is from the included **Menu** component which presents a list of choices. When one is selected by pressing `enter` the choice's model is pushed onto the stack by publishing `navstack.PushNavigation`.
+This example is from the included [menu component](https://github.com/KevM/bubbleo/blob/main/menu/model.go) which presents a list of choices. When a menu item is selected by pressing `enter` the choice's model is pushed onto the stack by publishing `navstack.PushNavigation`.
 
 ```go 
     case tea.KeyEnter.String():
@@ -43,11 +43,11 @@ This example is from the included **Menu** component which presents a list of ch
         }
 ```
 
-There is really no limit to the depth of the navigation stack. And it can be dynamic based on your application
+There is no limit to the depth of the navigation stack. And the stack components may be dynamic based on your application and user needs.
 
 #### Popping the stack
 
-To pop a component off the stack you might do the following in your `Update` func. 
+To pop a component off the stack you might do the following in your bubbletea `Update` func. 
 
 ```go 
 	case color.ColorSelected:
