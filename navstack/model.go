@@ -34,7 +34,8 @@ func (m Model) Init() tea.Cmd {
 
 func (m *Model) Push(item NavigationItem) tea.Cmd {
 
-	nim, cmd := item.Model.Update(m.window.GetWindowSizeMsg())
+	wmsg := m.window.GetWindowSizeMsg()
+	nim, cmd := item.Model.Update(wmsg)
 	item.Model = nim
 
 	m.stack = append(m.stack, item)
@@ -74,12 +75,29 @@ func (m Model) Top() *NavigationItem {
 	return &top
 }
 
+func (m Model) StackSummary() []string {
+	summary := []string{}
+	for _, item := range m.stack {
+		summary = append(summary, item.Title)
+	}
+
+	return summary
+}
+
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	top := m.Top()
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
+	case tea.WindowSizeMsg: // update the window size based on offsets
+		if top == nil {
+			return m, nil
+		}
 		m.window.Height = msg.Height
 		m.window.Width = msg.Width
+		msg.Width = m.window.Width - m.window.SideOffset
+		msg.Height = m.window.Height - m.window.TopOffset
+		um, cmd := top.Update(msg)
+		m.stack[len(m.stack)-1] = um.(NavigationItem)
+		return m, cmd
 	case ReloadCurrent:
 		if top == nil {
 			return m, nil
@@ -91,15 +109,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case PushNavigation:
 		cmd := m.Push(msg.Item)
 		return m, cmd
+	default:
+		if top == nil {
+			return m, nil
+		}
+		um, cmd := top.Update(msg)
+		m.stack[len(m.stack)-1] = um.(NavigationItem)
+		return m, cmd
 	}
-
-	if top == nil {
-		return m, nil
-	}
-
-	um, cmd := top.Update(msg)
-	m.stack[len(m.stack)-1] = um.(NavigationItem)
-	return m, cmd
 }
 
 func (m Model) View() string {
