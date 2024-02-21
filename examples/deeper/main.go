@@ -7,8 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kevm/bubbleo/breadcrumb"
-	"github.com/kevm/bubbleo/examples/deeper/artistcolors"
+	"github.com/kevm/bubbleo/examples/deeper/artistpaintings"
 	"github.com/kevm/bubbleo/examples/deeper/data"
 	"github.com/kevm/bubbleo/menu"
 	"github.com/kevm/bubbleo/navstack"
@@ -18,11 +17,12 @@ import (
 var docStyle = lipgloss.NewStyle()
 
 type model struct {
-	SelectedArtist string
-	SelectedColor  string
+	SelectedArtist   string
+	SelectedPainting string
+	SelectedColor    string
 
-	menu       menu.Model
-	breadcrumb breadcrumb.Model
+	menu menu.Model
+	// breadcrumb breadcrumb.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -31,8 +31,9 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case artistcolors.ArtistSelected:
+	case artistpaintings.ArtistPaintingColorSelected:
 		m.SelectedArtist = msg.Name
+		m.SelectedPainting = msg.Painting
 		m.SelectedColor = msg.Color
 		return m, tea.Quit
 	case tea.KeyMsg:
@@ -50,9 +51,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	bc := m.breadcrumb.View()
+	// bc := m.breadcrumb.View()
 	menu := m.menu.View()
-	return docStyle.Render(bc, menu)
+	return docStyle.Render(menu)
 }
 
 func main() {
@@ -62,7 +63,7 @@ func main() {
 		choices[i] = menu.Choice{
 			Title:       a.Name,
 			Description: a.Description,
-			Model:       artistcolors.New(a),
+			Model:       artistpaintings.New(a),
 		}
 	}
 
@@ -71,15 +72,15 @@ func main() {
 	ns := navstack.New(&w)
 
 	// Add the breadcrumb height to the top offset
-	bc := breadcrumb.New(&ns)
-	bctop, bcside := bc.FrameStyle.GetFrameSize()
-	w.TopOffset += bctop
-	w.SideOffset += bcside
+	// bc := breadcrumb.New(&ns)
+	// bctop, bcside := bc.FrameStyle.GetFrameSize()
+	// w.TopOffset += bctop
+	// w.SideOffset += bcside
 
 	title := "Choose an Artist:"
 	m := model{
-		menu:       menu.New(title, choices, nil),
-		breadcrumb: bc,
+		menu: menu.New(title, choices, nil),
+		// breadcrumb: bc,
 	}
 
 	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
@@ -99,5 +100,7 @@ func main() {
 	}
 
 	selected := topNavItem.Model.(model)
-	log.Printf("You selected the color %s from the artist %s ", selected.SelectedColor, selected.SelectedArtist)
+
+	result := fmt.Sprintf("You selected the color %s from the painting %s by the artist %s ", selected.SelectedColor, selected.SelectedPainting, selected.SelectedArtist)
+	log.Println(docStyle.Copy().Foreground(lipgloss.Color(selected.SelectedColor)).Render(result))
 }

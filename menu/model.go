@@ -110,6 +110,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+func (m Model) SelectedChoice() *Choice {
+	return m.selected
+}
+
 func (m *Model) SetSize(w tea.WindowSizeMsg) {
 	m.list.SetSize(w.Width, w.Height)
 }

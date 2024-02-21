@@ -1,7 +1,10 @@
-package artistcolors
+package paintingcolors
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/kevm/bubbleo/examples/deeper/color"
 	"github.com/kevm/bubbleo/examples/deeper/data"
 	"github.com/kevm/bubbleo/menu"
@@ -10,33 +13,32 @@ import (
 )
 
 type Model struct {
-	Artist data.Artist
+	Painting data.Painting
 
 	menu menu.Model
 }
 
-func New(a data.Artist) Model {
+func New(painting data.Painting) Model {
 
 	choices := []menu.Choice{}
-	for _, p := range a.Paintings {
-		for _, c := range p.Colors {
-			choice := menu.Choice{
-				Title:       c.RGB,
-				Description: c.Sample,
-				Model: color.Model{
-					RGB:    c.RGB,
-					Sample: c.Sample,
-				},
-			}
-			choices = append(choices, choice)
+	for _, c := range painting.Colors {
+		choice := menu.Choice{
+			Title:       lipgloss.NewStyle().Foreground(lipgloss.Color(c.RGB)).Render(c.RGB),
+			Description: c.Sample,
+			Model: color.Model{
+				RGB:    c.RGB,
+				Sample: c.Sample,
+			},
 		}
+		choices = append(choices, choice)
 	}
 
-	menu := menu.New("Artist Colors", choices, nil)
+	title := fmt.Sprintf("Colors featured in %s", painting.Title)
+	menu := menu.New(title, choices, nil)
 
 	return Model{
-		Artist: a,
-		menu:   menu,
+		Painting: painting,
+		menu:     menu,
 	}
 }
 
@@ -51,7 +53,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.menu.SetSize(msg)
 	case color.ColorSelected:
 		pop := utils.Cmdize(navstack.PopNavigation{})
-		cmd := utils.Cmdize(ArtistSelected{Name: m.Artist.Name, Color: msg.RGB})
+		result := PaintingColorSelected{
+			Painting: m.Painting.Title,
+			Color:    msg.RGB,
+		}
+		cmd := utils.Cmdize(result)
 		return m, tea.Sequence(pop, cmd)
 	}
 

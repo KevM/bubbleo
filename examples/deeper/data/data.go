@@ -49,7 +49,7 @@ func GetArtists() []Artist {
 		Paintings: []Painting{
 			{
 				Title:       "Girl With A Pearl Earring",
-				Description: "",
+				Description: "A young woman wearing an exotic dress and turban by dutch master's standards looking side long at the viewer with a large pearlescent earning.",
 				Colors: []Color{
 					{
 						RGB:    "#ffff00", //yellow
