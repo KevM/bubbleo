@@ -10,7 +10,7 @@ import (
 	"github.com/kevm/bubbleo/examples/simple/color"
 	"github.com/kevm/bubbleo/menu"
 	"github.com/kevm/bubbleo/navstack"
-	"github.com/kevm/bubbleo/window"
+	"github.com/kevm/bubbleo/shell"
 )
 
 var docStyle = lipgloss.NewStyle()
@@ -70,23 +70,23 @@ func main() {
 	choices := []menu.Choice{red, green, blue}
 
 	title := "Colorful Choices"
-	top, side := docStyle.GetFrameSize()
-	w := window.New(120, 25, top, side)
-	ns := navstack.New(&w)
+	// top, side := docStyle.GetFrameSize()
+	// w := window.New(120, 25, top, side)
+	// ns := navstack.New(&w)
 	m := model{
 		menu: menu.New(title, choices, nil),
 	}
-	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
+	s := shell.New()
+	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
+	p := tea.NewProgram(s, tea.WithAltScreen())
 
-	p := tea.NewProgram(ns, tea.WithAltScreen())
-
-	finalns, err := p.Run()
+	finalshell, err := p.Run()
 	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
 
-	topNavItem := finalns.(navstack.Model).Top()
+	topNavItem := finalshell.(shell.Model).Navstack.Top()
 	if topNavItem == nil {
 		log.Printf("Nothing selected")
 		os.Exit(1)

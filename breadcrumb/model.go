@@ -17,7 +17,7 @@ type Model struct {
 func New(n *navstack.Model) Model {
 	return Model{
 		Navstack:   n,
-		FrameStyle: styles.BreadCrumbFrameStyle.Copy(),
+		FrameStyle: styles.BreadCrumbFrameStyle.Copy().Width(120).Height(1),
 	}
 }
 
@@ -38,8 +38,6 @@ func (m Model) View() string {
 		}
 		b.WriteString(c)
 	}
-	b.WriteString("\n")
-
-	return "\n\n" + b.String()
-	//return m.FrameStyle.Render(b.String())
+	crumbs := b.String()
+	return m.FrameStyle.Render(crumbs)
 }

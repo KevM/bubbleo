@@ -11,7 +11,7 @@ import (
 	"github.com/kevm/bubbleo/examples/deeper/data"
 	"github.com/kevm/bubbleo/menu"
 	"github.com/kevm/bubbleo/navstack"
-	"github.com/kevm/bubbleo/window"
+	"github.com/kevm/bubbleo/shell"
 )
 
 var docStyle = lipgloss.NewStyle()
@@ -57,6 +57,7 @@ func (m model) View() string {
 }
 
 func main() {
+
 	artists := data.GetArtists()
 	choices := make([]menu.Choice, len(artists))
 	for i, a := range artists {
@@ -67,9 +68,9 @@ func main() {
 		}
 	}
 
-	maintop, mainside := docStyle.GetFrameSize()
-	w := window.New(120, 25, maintop, mainside)
-	ns := navstack.New(&w)
+	// maintop, mainside := docStyle.GetFrameSize()
+	// w := window.New(120, 25, maintop, mainside)
+	// ns := navstack.New(&w)
 
 	// Add the breadcrumb height to the top offset
 	// bc := breadcrumb.New(&ns)
@@ -83,17 +84,18 @@ func main() {
 		// breadcrumb: bc,
 	}
 
-	ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
-	p := tea.NewProgram(ns, tea.WithAltScreen())
+	s := shell.New()
+	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
+	p := tea.NewProgram(s, tea.WithAltScreen())
 
-	finalns, err := p.Run()
+	finalshell, err := p.Run()
 	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
 
 	// the resulting model is a navstack. With the top model being the one that quit.
-	topNavItem := finalns.(navstack.Model).Top()
+	topNavItem := finalshell.(shell.Model).Navstack.Top()
 	if topNavItem == nil {
 		log.Printf("Nothing selected")
 		os.Exit(1)
