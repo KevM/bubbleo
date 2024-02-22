@@ -29,6 +29,8 @@ jobs:
           TERM: xterm-256color
         with:
           path: "./examples/deeper/demo.tape"
+      - name: Move demo.gif to examples/deeper
+        run: mv demo.gif ./examples/deeper/demo.gif
       - uses: stefanzweifel/git-auto-commit-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
