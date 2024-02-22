@@ -5,40 +5,42 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/kevm/bubbleo/breadcrumb"
 	"github.com/kevm/bubbleo/navstack"
+	"github.com/kevm/bubbleo/utils"
 	"github.com/kevm/bubbleo/window"
 )
 
 type Model struct {
 	Navstack   *navstack.Model
 	Breadcrumb breadcrumb.Model
+
+	window *window.Model
 }
 
 func New() Model {
-	w := window.New(120, 30, 2, 0)
+	w := window.New(120, 30, 0, 0)
 	ns := navstack.New(&w)
 	bc := breadcrumb.New(&ns)
 
 	return Model{
 		Navstack:   &ns,
 		Breadcrumb: bc,
+
+		window: &w,
 	}
 }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+
+	w, h := m.Breadcrumb.FrameStyle.GetFrameSize()
+	m.window.SideOffset = w
+	m.window.TopOffset = h
+
+	return utils.Cmdize(m.window.GetWindowSizeMsg())
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// cmds := []tea.Cmd{}
-
-	// updatedbc, cmd := m.Breadcrumb.Update(msg)
-	// m.Breadcrumb = updatedbc.(breadcrumb.Model)
-	// cmds = append(cmds, cmd)
-
 	cmd := m.Navstack.Update(msg)
-	// cmds = append(cmds, cmd)
-
-	return m, cmd //tea.Batch(cmds...)
+	return m, cmd
 }
 
 func (m Model) View() string {
