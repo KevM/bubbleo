@@ -1,7 +1,6 @@
 Output demo.gif
 
 Require echo
-export COLORTERM=truecolor
 Set FontSize 28
 Set Width 1800
 Set Height 900
