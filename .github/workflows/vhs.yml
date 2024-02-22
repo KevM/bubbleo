@@ -9,7 +9,7 @@ permissions:
 on:
   push:
     paths:
-      - "**/$EXAMPLE_NAME/*.tape"
+      - "**/*.tape"
 jobs:
   vhs:
     runs-on: ubuntu-latest
