@@ -2,14 +2,14 @@ Output demo.gif
 
 Require echo
 
-Set FontSize 32
+Set FontSize 36
 Set Width 1800
 Set Height 900
 Set PlaybackSpeed 0.5
 
 Set Shell bash
-Sleep 2.5s
-Type "go run ."
+Sleep 1s
+Type "./bin/simple"
 Enter
 Sleep 500ms
 Down
