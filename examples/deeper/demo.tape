@@ -1,7 +1,7 @@
 Output demo.gif
 
 Require echo
-
+export COLORTERM=truecolor
 Set FontSize 28
 Set Width 1800
 Set Height 900
@@ -40,4 +40,5 @@ Enter
 Sleep 2s
 Enter
 Sleep 4s
+
 
