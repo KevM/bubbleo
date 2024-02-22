@@ -8,7 +8,7 @@ on:
     paths:
       - "**.tape"
 jobs:
-  vhs-deeper:
+  vhs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
