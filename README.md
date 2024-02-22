@@ -9,15 +9,15 @@ Add support to your bubble tea application to easily transition between componen
 <img src="examples/deeper/demo.gif" alt="Recording of the deeper example demo"/>
 
 ```go 
-w := window.New(120, 25, 0, 0)
-ns := navstack.New(&w)
-m := model{
-    // your tea Component goes here
-}
-ns.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
+    s := shell.New()
+    s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "Colors"})
+    p := tea.NewProgram(s, tea.WithAltScreen())
 
-p := tea.NewProgram(ns, tea.WithAltScreen())
-p.Run()
+    _, err := p.Run()
+    if err != nil {
+        fmt.Println("Error running program:", err)
+        os.Exit(1)
+    }
 ```
 
 Push, well, pushes a new navigation item on the nav stack. The title is used for breadcrumbs (more later). The model at  the top of the navstack has it's Update and View funcs used effectively making it the presented component on the stack.
@@ -74,4 +74,7 @@ It is handy to give the user a sense of place by presenting a [breadcrumb view](
 
 Checkout the deeper example for usage of breadcrumbs.
 
+## Shell 
+
+Finally the shell component emcapsulates the Breadcrumb and Navstack components allowing them to work together. See the [simple](https://github.com/KevM/bubbleo/tree/main/examples/simple) and [deeper](https://github.com/KevM/bubbleo/tree/main/examples/deeper) examples to see how it works.
 
