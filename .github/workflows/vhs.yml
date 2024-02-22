@@ -19,14 +19,14 @@ jobs:
         env:
           TERM: xterm-256color
         with:
-          working-directory: "examples/$EXAMPLE_NAME"
+          working-directory: "examples/deeper"
           path: "demo.tape"
       - uses: stefanzweifel/git-auto-commit-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          working-directory: "examples/$EXAMPLE_NAME"
-          commit_message: Generated `$EXAMPLE_NAME` demo VHS GIF
+          working-directory: "examples/deeper"
+          commit_message: Generated deeper demo VHS GIF
           branch: main
           commit_user_name: vhs-action 📼
           commit_user_email: actions@github.com
