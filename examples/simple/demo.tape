@@ -1,4 +1,13 @@
-Set Shell zsh
+Output demo.gif
+
+Require echo
+
+Set FontSize 28
+Set Width 1800
+Set Height 900
+Set PlaybackSpeed 0.5
+
+Set Shell bash
 Sleep 2.5s
 Type "go run ."
 Enter

@@ -85,7 +85,7 @@ func main() {
 	}
 
 	s := shell.New()
-	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "main menu"})
+	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "Artists"})
 	p := tea.NewProgram(s, tea.WithAltScreen())
 
 	finalshell, err := p.Run()

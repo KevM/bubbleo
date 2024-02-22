@@ -40,5 +40,5 @@ func (m Model) View() string {
 		Foreground(lipgloss.Color(m.RGB)).
 		Render(m.Sample)
 
-	return sample + "\n\n\n\n\n" + "enter: select, esc: back\n"
+	return "\n" + sample + "\n\n\n\n" + "enter: select, esc: back\n"
 }
