@@ -28,6 +28,7 @@ jobs:
         uses: charmbracelet/vhs-action@v2
         env:
           TERM: xterm-256color
+          working-directory: ./examples/deeper
         with:
           path: "demo.tape"
 
