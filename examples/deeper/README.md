@@ -1,4 +1,4 @@
-# Go Deeper Menu
+# A "Deeper" Hierarchical Menu
 
 This example demonstrates using the shell component which wraps the navstack and breadcrumbs in a handy application container. There are 3 levels of menus navigating the user through the application. In this case we will go from _Artists_ to their _Paintings_ to the prominent _Colors_ used in that painting.
 
