@@ -1,0 +1,55 @@
+version: '3'
+
+tasks:
+  default:
+    deps:
+      - go-build
+
+  clean:
+    deps:
+      - go-clean
+
+  # Things we need to install to do dev work
+  # brew install ffmpeg
+  dev-deps:
+    cmds:
+      - go install github.com/charmbracelet/vhs@latest
+
+###########################################################
+## Golang
+
+  go-tidy:
+    cmds:
+      - go mod tidy
+
+  go-build:
+    deps:
+      - deeper
+      - simple
+
+  go-clean:
+    cmds:
+      - rm -f bin/*
+
+  go-update:
+    cmds:
+      - go get -u ./...
+
+  deeper:
+    deps: [go-tidy]
+    cmds:
+      - go build -o bin/deeper examples/deeper/*.go
+    sources:
+      - ./**/*.go
+    generates:
+      - bin/deeper
+
+  simple:
+    deps: [go-tidy]
+    cmds:
+      - go build -o bin/simple examples/simple/*.go
+    sources:
+      - ./**/*.go
+    generates:
+      - bin/simple
+

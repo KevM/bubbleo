@@ -1,8 +1,5 @@
 name: vhs
 
-env: 
-  EXAMPLE_NAME: deeper
-
 permissions:
   contents: write
 
@@ -10,29 +7,32 @@ on:
   push:
     paths:
       - "**/*.tape"
+      - "**/vhs.yml"
 
 jobs:
   vhs:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./examples/deeper
     steps:
       - uses: actions/checkout@v3
 
       - name: Install Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.21.6
+          go-version: 1.22.0
+
+      - name: Build Examples
+        run: go build -o ./bin/deeper ./examples/deeper/*.go
 
       - name: Create demo GIF
         uses: charmbracelet/vhs-action@v2
         env:
           TERM: xterm-256color
-          working-directory: ./examples/deeper
         with:
-          path: "demo.tape"
-
+          path: ./examples/deeper/demo.tape
+      
+      - name: Move demo GIF to examples/deeper; cleanup
+        run: mv demo.gif examples/deeper/demo.gif && rm -rf ./bin
+  
       - name: Commit and push demo.gif
         uses: stefanzweifel/git-auto-commit-action@v4
         env:

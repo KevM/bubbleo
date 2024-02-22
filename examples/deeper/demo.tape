@@ -7,7 +7,7 @@ Set PlaybackSpeed 0.5
 
 Set Shell bash
 Sleep 0.5s
-Type "go run ."
+Type "./bin/deeper"
 Enter
 Sleep 1.5s
 Down
