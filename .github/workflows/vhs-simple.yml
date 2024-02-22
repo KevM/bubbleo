@@ -1,7 +1,8 @@
-name: vhs-deeper
+name: vhs-simple
 
 env: 
   EXAMPLE_NAME: simple
+
 permissions:
   contents: write
 
@@ -10,7 +11,7 @@ on:
     paths:
       - "**/$EXAMPLE_NAME/*.tape"
 jobs:
-  vhs-deeper:
+  vhs-simple:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
