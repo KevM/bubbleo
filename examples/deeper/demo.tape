@@ -1,5 +1,4 @@
-Output ./examples/deeper/demo.gif
-
+Output demo.gif
 Require echo
 Set FontSize 28
 Set Width 1800
@@ -39,3 +38,4 @@ Enter
 Sleep 2s
 Enter
 Sleep 4s
+

@@ -11,6 +11,10 @@ on:
     paths:
       - "**/*.tape"
 
+defaults:
+  run:
+    working-directory: ./examples/deeper
+
 jobs:
   vhs:
     runs-on: ubuntu-latest
@@ -24,7 +28,7 @@ jobs:
         env:
           TERM: xterm-256color
         with:
-          path: "./examples/deeper/demo.tape"
+          path: "./demo.tape"
       - uses: stefanzweifel/git-auto-commit-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
