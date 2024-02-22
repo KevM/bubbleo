@@ -14,6 +14,8 @@ on:
 jobs:
   vhs:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./examples/deeper
     steps:
       - uses: actions/checkout@v3
 
@@ -21,9 +23,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: 1.21.6
-
-      - name: CWD to examples/deeper
-        run: cd ./examples/deeper
 
       - name: Create demo GIF
         uses: charmbracelet/vhs-action@v2
