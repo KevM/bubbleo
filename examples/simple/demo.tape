@@ -2,7 +2,7 @@ Output demo.gif
 
 Require echo
 
-Set FontSize 28
+Set FontSize 32
 Set Width 1800
 Set Height 900
 Set PlaybackSpeed 0.5
