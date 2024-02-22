@@ -28,7 +28,7 @@ jobs:
         env:
           TERM: xterm-256color
         with:
-          path: "./demo.tape"
+          path: "./examples/deeper/demo.tape"
       - uses: stefanzweifel/git-auto-commit-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
