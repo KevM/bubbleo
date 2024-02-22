@@ -22,15 +22,15 @@ jobs:
         with:
           go-version: 1.21.6
 
+      - name: CWD to examples/deeper
+        run: cd ./examples/deeper
+
       - name: Create demo GIF
         uses: charmbracelet/vhs-action@v2
         env:
           TERM: xterm-256color
         with:
-          path: "./examples/deeper/demo.tape"
-
-      - name: Move demo.gif to examples/deeper
-        run: mv ./demo.gif ./examples/deeper/demo.gif
+          path: "demo.tape"
 
       - name: Commit and push demo.gif
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -43,5 +43,3 @@ jobs:
           commit_user_email: actions@github.com
           commit_author: vhs-action 📼 <actions@github.com>
           file_pattern: "*.gif"
-
-  
