@@ -48,7 +48,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          commit_message: Generated deeper demo VHS GIF
+          commit_message: Generated demo VHS GIFs
           branch: main
           commit_user_name: vhs-action 📼
           commit_user_email: actions@github.com
