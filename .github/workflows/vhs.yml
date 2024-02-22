@@ -6,23 +6,42 @@ permissions:
 on:
   push:
     paths:
-      - '**.tape'
+      - "**.tape"
 jobs:
-  vhs:
+  vhs-deeper:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: charmbracelet/vhs-action@v1
+        env:
+          TERM: xterm-256color
         with:
-          path: 'examples/deeper/demo.tape'
+          path: "examples/deeper/demo.tape"
       - uses: stefanzweifel/git-auto-commit-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TERM: xterm-256color
         with:
-          commit_message: Update generated VHS GIF
+          commit_message: Generated `deeper` demo VHS GIF
           branch: main
           commit_user_name: vhs-action 📼
           commit_user_email: actions@github.com
           commit_author: vhs-action 📼 <actions@github.com>
-          file_pattern: '*.gif'
+          # file_pattern: "*.gif"
+  # vhs-simple:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: charmbracelet/vhs-action@v1
+  #       with:
+  #         path: 'examples/simple/demo.tape'
+  #     - uses: stefanzweifel/git-auto-commit-action@v4
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         TERM: xterm-256color
+  #       with:
+  #         commit_message: Update generated VHS GIF
+  #         branch: main
+  #         commit_user_name: vhs-action 📼
+  #         commit_user_email: actions@github.com
+  #         commit_author: vhs-action 📼 <actions@github.com>
+  #         file_pattern: '*.gif'
