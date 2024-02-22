@@ -40,7 +40,7 @@ jobs:
         with:
           path: ./examples/simple/demo.tape
       
-      - name: Move deeper demo GIF to examples/simple
+      - name: Move simple demo GIF to examples/simple
         run: mv demo.gif examples/simple/demo.gif 
 
       - name: Commit and push demo.gif
