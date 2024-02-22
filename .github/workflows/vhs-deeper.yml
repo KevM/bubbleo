@@ -1,14 +1,16 @@
-name: vhs
+name: vhs-deeper
 
+env: 
+  EXAMPLE_NAME: deeper
 permissions:
   contents: write
 
 on:
   push:
     paths:
-      - "**.tape"
+      - "**/$EXAMPLE_NAME/*.tape"
 jobs:
-  vhs:
+  vhs-deeper:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,17 +18,18 @@ jobs:
         env:
           TERM: xterm-256color
         with:
-          working-directory: "./examples/deeper/"
+          working-directory: "examples/$EXAMPLE_NAME"
           path: "demo.tape"
       - uses: stefanzweifel/git-auto-commit-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          working-directory: "./examples/deeper/"
-          commit_message: Generated `deeper` demo VHS GIF
+          working-directory: "examples/$EXAMPLE_NAME"
+          commit_message: Generated `$EXAMPLE_NAME` demo VHS GIF
           branch: main
           commit_user_name: vhs-action 📼
           commit_user_email: actions@github.com
           commit_author: vhs-action 📼 <actions@github.com>
           file_pattern: "*.gif"
+
   
