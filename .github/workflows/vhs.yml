@@ -21,18 +21,28 @@ jobs:
           go-version: 1.22.0
 
       - name: Build Examples
-        run: go build -o ./bin/deeper ./examples/deeper/*.go
+        run: go build -o ./bin/deeper ./examples/deeper/*.go && go build -o ./bin/simple ./examples/simple/*.go
 
-      - name: Create demo GIF
+      - name: Create deeper demo GIF
         uses: charmbracelet/vhs-action@v2
         env:
           TERM: xterm-256color
         with:
           path: ./examples/deeper/demo.tape
       
-      - name: Move demo GIF to examples/deeper; cleanup
-        run: mv demo.gif examples/deeper/demo.gif && rm -rf ./bin
-  
+      - name: Move deeper demo GIF to examples/deeper
+        run: mv demo.gif examples/deeper/demo.gif 
+
+      - name: Create simple demo GIF
+        uses: charmbracelet/vhs-action@v2
+        env:
+          TERM: xterm-256color
+        with:
+          path: ./examples/simple/demo.tape
+      
+      - name: Move deeper demo GIF to examples/simple
+        run: mv demo.gif examples/simple/demo.gif 
+
       - name: Commit and push demo.gif
         uses: stefanzweifel/git-auto-commit-action@v4
         env:
