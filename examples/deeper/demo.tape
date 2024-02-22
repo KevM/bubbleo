@@ -1,4 +1,4 @@
-Output demo.gif
+Output ./examples/deeper/demo.gif
 
 Require echo
 Set FontSize 28
