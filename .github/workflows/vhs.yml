@@ -14,8 +14,9 @@ on:
 jobs:
   vhs:
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./examples/deeper
+    defaults:
+      run:
+        working-directory: ./examples/deeper
     steps:
       - uses: actions/checkout@v3
 
