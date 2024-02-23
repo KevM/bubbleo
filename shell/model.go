@@ -1,3 +1,6 @@
+// Package Shell is a basic wrapper around the navstack and breadcrumb packages
+// It provides a basic navigation mechanism while showing breadcrumb view of where the user is
+// within the navigation stack.
 package shell
 
 import (
@@ -16,6 +19,7 @@ type Model struct {
 	window *window.Model
 }
 
+// New creates a new shell model
 func New() Model {
 	w := window.New(120, 30, 0, 0)
 	ns := navstack.New(&w)
@@ -29,6 +33,7 @@ func New() Model {
 	}
 }
 
+// Init determines the size of the widow used by the navigation stack.
 func (m Model) Init() tea.Cmd {
 
 	w, h := m.Breadcrumb.FrameStyle.GetFrameSize()
@@ -38,11 +43,13 @@ func (m Model) Init() tea.Cmd {
 	return utils.Cmdize(m.window.GetWindowSizeMsg())
 }
 
+// Update passes messages to the navigation stack.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmd := m.Navstack.Update(msg)
 	return m, cmd
 }
 
+// View renders the breadcrumb and the navigation stack.
 func (m Model) View() string {
 	bc := m.Breadcrumb.View()
 	nav := m.Navstack.View()

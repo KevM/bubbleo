@@ -1,3 +1,6 @@
+// Package Breadcrumb is a component that consumes a pointer ot a navstack.Model
+// and renders a breadcrumb trail. It is used to give the user a sense of where
+// they are in the application.
 package breadcrumb
 
 import (

@@ -1,3 +1,10 @@
+// Package Navstack manages a stack of NavigationItems which can be pushed or popped from the stack.
+// The top most stack navigation item is used by [BubbleTea] to Update and renders it's View.
+// When pushing and popping items from the stack, the new view to be presented is sent a tea.WindowSizeMsg
+// to ensure it's view can be presented correctly. When the last item is popped from the stack the application will quit.
+// NavigationItem models which implement the Closable interface will have their Close method called when they are popped from the stack.
+// This is useful for cleaning up resources that may not be garbage collected when a view a no longer needed.
+// [BubbleTea]: https://github.com/charmbracelet/bubbletea
 package navstack
 
 import (
@@ -5,6 +12,8 @@ import (
 	"github.com/kevm/bubbleo/window"
 )
 
+// Closable is an interface for models that have resources that need to be cleaned up when
+// they are no longer needed. The navigation stack checks for this interface when popping items.
 type Closable interface {
 	Close() error
 }
@@ -14,6 +23,8 @@ type Model struct {
 	window *window.Model
 }
 
+// New creates a new navigation stack model. The window is used to
+// constrain the view within the container of the navigation stack.
 func New(w *window.Model) Model {
 	model := Model{
 		stack:  []NavigationItem{},
@@ -32,6 +43,10 @@ func (m Model) Init() tea.Cmd {
 	return top.Init()
 }
 
+// Phsh pushes a new navigation item onto the stack.
+// The new navigation item is given a tea.WindowSizeMsg to ensure it's view can be presented correctly.
+// The item's Init method is called and resulting command is processed by [BubbleTea].
+// This new item will be the top most item on the stack and thus will be rendered.
 func (m *Model) Push(item NavigationItem) tea.Cmd {
 
 	wmsg := m.window.GetWindowSizeMsg()
@@ -42,6 +57,10 @@ func (m *Model) Push(item NavigationItem) tea.Cmd {
 	return tea.Batch(cmd, item.Init())
 }
 
+// Pop removes the top most navigation item from the stack.
+// If the item implements the Closable interface the Close method is called.
+// The new top most item on the stack is given a tea.WindowSizeMsg to ensure it's view can be presented correctly.
+// If there are no more items on the stack the application will quit.
 func (m *Model) Pop() tea.Cmd {
 	top := m.Top()
 	if top == nil {
@@ -66,6 +85,7 @@ func (m *Model) Pop() tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
+// Top returns the top most navigation item on the stack.
 func (m Model) Top() *NavigationItem {
 	if len(m.stack) == 0 {
 		return nil
@@ -75,6 +95,8 @@ func (m Model) Top() *NavigationItem {
 	return &top
 }
 
+// StackSummary returns a list of titles for each item on the stack.
+// This is currently used by the breadcrumb component to render the breadcrumb trail.
 func (m Model) StackSummary() []string {
 	summary := []string{}
 	for _, item := range m.stack {
@@ -84,6 +106,7 @@ func (m Model) StackSummary() []string {
 	return summary
 }
 
+// Update processes messages for the top most navigation item on the stack.
 func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	top := m.Top()
 	switch msg := msg.(type) {
@@ -119,6 +142,7 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	}
 }
 
+// View renders the top most navigation item on the stack.
 func (m Model) View() string {
 
 	top := m.Top()

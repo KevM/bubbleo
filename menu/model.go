@@ -1,9 +1,14 @@
+// Package Menu takes a list of choices allowing the user to select a component
+// to push onto the navigation stack. Each choice has a title and a description and
+// a component model implementing [tea.Model].
+// [tea.Model] https://github.com/charmbracelet/bubbletea/blob/a256e76ff5ff142d747ad833c7aa784113f8558c/tea.go#L39
 package menu
 
 import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/kevm/bubbleo/navstack"
 	"github.com/kevm/bubbleo/styles"
 	"github.com/kevm/bubbleo/utils"
@@ -24,16 +29,31 @@ func (i choiceItem) Title() string       { return i.title }
 func (i choiceItem) Description() string { return i.desc }
 func (i choiceItem) FilterValue() string { return i.title + i.desc }
 
+// MenuStyles is a struct that holds the styles for the menu
+// This mostly a passthrough for bubble/list component styles.
+type MenuStyles struct {
+	ListTitleStyle lipgloss.Style
+	ListItemStyles list.DefaultItemStyles
+}
+
 type Model struct {
 	Choices []Choice
-	list    list.Model
 
+	list     list.Model
 	selected *Choice
+	delegate list.DefaultDelegate
 }
 
 // New setups up a new menu model
 func New(title string, choices []Choice, selected *Choice) Model {
+
+	styles := MenuStyles{
+		ListTitleStyle: styles.ListTitleStyle,
+		ListItemStyles: list.NewDefaultItemStyles(),
+	}
+
 	delegation := list.NewDefaultDelegate()
+	delegation.Styles = styles.ListItemStyles
 	items := make([]list.Item, len(choices))
 	selectedIndex := -1
 	for i, choice := range choices {
@@ -47,6 +67,7 @@ func New(title string, choices []Choice, selected *Choice) Model {
 		Choices:  choices,
 		list:     list.New(items, delegation, 120, 20),
 		selected: selected,
+		delegate: delegation,
 	}
 
 	if selected != nil {
@@ -61,9 +82,6 @@ func New(title string, choices []Choice, selected *Choice) Model {
 	model.list.SetShowFilter(false)
 	model.list.SetShowStatusBar(false)
 	model.list.SetShowHelp(false)
-
-	//TODO: figure out height long term.
-	// model.list.SetSize(window.Width, window.Height-window.TopOffset)
 
 	chooseKeyBinding := key.NewBinding(
 		key.WithKeys("enter"),
@@ -81,6 +99,13 @@ func New(title string, choices []Choice, selected *Choice) Model {
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+// SetStyles allows you to customize the styles used by the menu. This is mostly a passthrough
+// to the bubble/list component used by the menu.
+func (m Model) SetStyles(s MenuStyles) {
+	m.list.Styles.Title = s.ListTitleStyle
+	m.delegate.Styles = s.ListItemStyles
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -110,14 +135,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// SelectedChoice returns the currently selected menu choice
 func (m Model) SelectedChoice() *Choice {
 	return m.selected
 }
 
+// SetSize sets the size of the menu
 func (m *Model) SetSize(w tea.WindowSizeMsg) {
 	m.list.SetSize(w.Width, w.Height)
 }
 
+// View renders the menu. When no choices are present, nothing is rendered.
 func (m Model) View() string {
 	// display menu if choices are present.
 	if len(m.Choices) > 0 {
