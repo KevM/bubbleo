@@ -7,7 +7,6 @@ on:
   push:
     paths:
       - "**/*.tape"
-      - "**/vhs.yml"
 
 jobs:
   vhs:
