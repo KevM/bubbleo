@@ -2,6 +2,8 @@
 
 BubbleO is a collection of components for the excellent terminal UI tool [bubbletea](https://github.com/charmbracelet/bubbletea). 
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/kevm/bubbleo.svg)](https://pkg.go.dev/github.com/kevm/bubbleo)
+
 ## [Navstack](https://github.com/KevM/bubbleo/blob/main/navstack/model.go)
 
 Add support to your bubble tea application to easily transition between component models. The example below uses the [menu component](https://github.com/KevM/bubbleo/blob/main/menu/model.go) to let a user pick a color from a list of artist paintings.

@@ -1,3 +1,4 @@
+// Package styles provides default styles for the bubbleo components
 package styles
 
 import (
