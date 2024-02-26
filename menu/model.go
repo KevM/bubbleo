@@ -54,24 +54,11 @@ func New(title string, choices []Choice, selected *Choice) Model {
 
 	delegation := list.NewDefaultDelegate()
 	delegation.Styles = styles.ListItemStyles
-	items := make([]list.Item, len(choices))
-	selectedIndex := -1
-	for i, choice := range choices {
-		if selected != nil && &choice == selected {
-			selectedIndex = i
-		}
-		items[i] = choiceItem{title: choice.Title, desc: choice.Description, key: choice}
-	}
 
 	model := Model{
-		Choices:  choices,
-		list:     list.New(items, delegation, 120, 20),
+		list:     list.New([]list.Item{}, delegation, 120, 20),
 		selected: selected,
 		delegate: delegation,
-	}
-
-	if selected != nil {
-		model.list.Select(selectedIndex)
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -94,11 +81,31 @@ func New(title string, choices []Choice, selected *Choice) Model {
 		return []key.Binding{chooseKeyBinding}
 	}
 
+	model.SetChoices(choices, selected)
+
 	return model
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func (m *Model) SetChoices(choices []Choice, selected *Choice) {
+	m.Choices = choices
+
+	items := make([]list.Item, len(choices))
+	selectedIndex := -1
+	for i, choice := range choices {
+		if selected != nil && &choice == selected {
+			selectedIndex = i
+		}
+		items[i] = choiceItem{title: choice.Title, desc: choice.Description, key: choice}
+	}
+
+	m.list.SetItems(items)
+	if selected != nil {
+		m.list.Select(selectedIndex)
+	}
 }
 
 // SetStyles allows you to customize the styles used by the menu. This is mostly a passthrough
