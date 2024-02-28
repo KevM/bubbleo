@@ -104,6 +104,7 @@ func (m *Model) SetChoices(choices []Choice, selected *Choice) {
 
 	m.list.SetItems(items)
 	if selected != nil {
+		m.selected = selected
 		m.list.Select(selectedIndex)
 	}
 }
@@ -128,9 +129,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyEnter.String():
 			choice, ok := m.list.SelectedItem().(choiceItem)
 			if ok {
-				m.selected = &choice.key
-				cmd := m.NavigateToSelected()
-				return m, cmd
+				return m.SelectChoice(&choice.key)
 			}
 		}
 	}
@@ -141,13 +140,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-// NavigateToSelected pushes the selected choice onto the navigation stack
-func (m Model) NavigateToSelected() tea.Cmd {
-	if m.selected == nil {
-		return nil
+// SelectChoice pushes the selected choice onto the navigation stack. If the choice is nil, nothing happens.
+func (m Model) SelectChoice(choice *Choice) (Model, tea.Cmd) {
+	if choice == nil {
+		return m, nil
 	}
-	item := navstack.NavigationItem{Title: m.selected.Title, Model: m.selected.Model}
-	return utils.Cmdize(navstack.PushNavigation{Item: item})
+
+	m.selected = choice
+	item := navstack.NavigationItem{Title: choice.Title, Model: choice.Model}
+	cmd := utils.Cmdize(navstack.PushNavigation{Item: item})
+
+	return m, cmd
 }
 
 // SelectedChoice returns the currently selected menu choice
