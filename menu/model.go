@@ -129,8 +129,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			choice, ok := m.list.SelectedItem().(choiceItem)
 			if ok {
 				m.selected = &choice.key
-				item := navstack.NavigationItem{Title: choice.title, Model: choice.key.Model}
-				cmd := utils.Cmdize(navstack.PushNavigation{Item: item})
+				cmd := m.NavigateToSelected()
 				return m, cmd
 			}
 		}
@@ -140,6 +139,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
 	return m, cmd
+}
+
+// NavigateToSelected pushes the selected choice onto the navigation stack
+func (m Model) NavigateToSelected() tea.Cmd {
+	if m.selected == nil {
+		return nil
+	}
+	item := navstack.NavigationItem{Title: m.selected.Title, Model: m.selected.Model}
+	return utils.Cmdize(navstack.PushNavigation{Item: item})
 }
 
 // SelectedChoice returns the currently selected menu choice
