@@ -8,6 +8,8 @@
 package navstack
 
 import (
+	"errors"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/kevm/bubbleo/window"
 )
@@ -43,7 +45,7 @@ func (m Model) Init() tea.Cmd {
 	return top.Init()
 }
 
-// Phsh pushes a new navigation item onto the stack.
+// Push pushes a new navigation item onto the stack.
 // The new navigation item is given a tea.WindowSizeMsg to ensure it's view can be presented correctly.
 // The item's Init method is called and resulting command is processed by [BubbleTea].
 // This new item will be the top most item on the stack and thus will be rendered.
@@ -83,6 +85,22 @@ func (m *Model) Pop() tea.Cmd {
 	}
 
 	return tea.Batch(cmds...)
+}
+
+// Clear pops all the items from the stack.
+func (m *Model) Clear() error {
+	var errs []error
+	for _, item := range m.stack {
+		if c, ok := item.Model.(Closable); ok {
+			err := c.Close()
+			if err != nil {
+				errs = append(errs, err)
+			}
+		}
+	}
+
+	m.stack = []NavigationItem{}
+	return errors.Join(errs...)
 }
 
 // Top returns the top most navigation item on the stack.
