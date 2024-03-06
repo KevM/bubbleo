@@ -5,6 +5,7 @@
 package menu
 
 import (
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -42,6 +43,12 @@ type Model struct {
 	list     list.Model
 	selected *Choice
 	delegate list.DefaultDelegate
+
+	width  int
+	height int
+	help.KeyMap
+	keys KeyMap
+	help help.Model
 }
 
 // New setups up a new menu model
@@ -55,10 +62,17 @@ func New(title string, choices []Choice, selected *Choice) Model {
 	delegation := list.NewDefaultDelegate()
 	delegation.Styles = styles.ListItemStyles
 
+	defaultWidth := 120
+	defaultHeight := 20
+
 	model := Model{
-		list:     list.New([]list.Item{}, delegation, 120, 20),
+		list:     list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
 		selected: selected,
 		delegate: delegation,
+		keys:     DefaultKeyMap,
+		help:     help.New(),
+		width:    defaultWidth,
+		height:   defaultHeight,
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -122,16 +136,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.SetSize(msg)
 	case tea.KeyMsg:
-		switch msg.String() {
-		case tea.KeyEsc.String():
-			pop := utils.Cmdize(navstack.PopNavigation{})
-			return m, pop
-		case tea.KeyEnter.String():
-			choice, ok := m.list.SelectedItem().(choiceItem)
-			if ok {
-				return m.SelectChoice(&choice.key)
-			}
-		}
+		return m.handleKeyMsg(msg, msg)
 	}
 
 	// No selection made yet so update the list
@@ -160,14 +165,24 @@ func (m Model) SelectedChoice() *Choice {
 
 // SetSize sets the size of the menu
 func (m *Model) SetSize(w tea.WindowSizeMsg) {
+	m.width = w.Width
+	m.height = w.Height
 	m.list.SetSize(w.Width, w.Height)
+	m.help.Width = w.Width
 }
 
 // View renders the menu. When no choices are present, nothing is rendered.
 func (m Model) View() string {
+	var help string
+	if m.help.ShowAll {
+		height := m.height - 5
+		m.list.SetSize(m.width, height)
+		help = styles.HelpStyle.Render(m.help.View(m.keys))
+	}
+
 	// display menu if choices are present.
 	if len(m.Choices) > 0 {
-		return "\n" + m.list.View()
+		return "\n" + m.list.View() + help
 	}
 
 	return ""

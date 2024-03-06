@@ -11,4 +11,5 @@ var (
 
 	ListTitleStyle       = lipgloss.NewStyle().MarginLeft(2).Background(backgroundColor).Foreground(foregroundColor).Bold(true)
 	BreadCrumbFrameStyle = lipgloss.NewStyle().Background(backgroundColor).Foreground(foregroundColor).Margin(1)
+	HelpStyle            = lipgloss.NewStyle().Padding(1, 2)
 )
