@@ -73,16 +73,16 @@ func (m *Model) Pop() tea.Cmd {
 		c.Close()
 	}
 
-	cmds := []tea.Cmd{}
-	nim, cmd := top.Model.Update(m.window.GetWindowSizeMsg())
-	top.Model = nim
-	cmds = append(cmds, cmd, top.Init())
-
 	m.stack = m.stack[:len(m.stack)-1]
 	top = m.Top()
 	if top == nil {
 		return tea.Quit
 	}
+
+	cmds := []tea.Cmd{}
+	nim, cmd := top.Model.Update(m.window.GetWindowSizeMsg())
+	top.Model = nim
+	cmds = append(cmds, cmd, top.Init())
 
 	return tea.Batch(cmds...)
 }
