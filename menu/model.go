@@ -40,8 +40,8 @@ type MenuStyles struct {
 type Model struct {
 	Choices []Choice
 
-	list     list.Model
-	selected *Choice
+	list list.Model
+	// selected Choice
 	delegate list.DefaultDelegate
 
 	width  int
@@ -66,8 +66,8 @@ func New(title string, choices []Choice, selected *Choice) Model {
 	defaultHeight := 20
 
 	model := Model{
-		list:     list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
-		selected: selected,
+		list: list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
+		// selected: selected,
 		delegate: delegation,
 		keys:     DefaultKeyMap,
 		help:     help.New(),
@@ -118,7 +118,7 @@ func (m *Model) SetChoices(choices []Choice, selected *Choice) {
 
 	m.list.SetItems(items)
 	if selected != nil {
-		m.selected = selected
+		// m.selected = selected
 		m.list.Select(selectedIndex)
 	}
 }
@@ -146,22 +146,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // SelectChoice pushes the selected choice onto the navigation stack. If the choice is nil, nothing happens.
-func (m Model) SelectChoice(choice *Choice) (Model, tea.Cmd) {
-	if choice == nil {
-		return m, nil
-	}
-
-	m.selected = choice
+func (m Model) SelectChoice(choice Choice) (Model, tea.Cmd) {
+	// m.selected = choice
 	item := navstack.NavigationItem{Title: choice.Title, Model: choice.Model}
 	cmd := utils.Cmdize(navstack.PushNavigation{Item: item})
 
 	return m, cmd
 }
 
-// SelectedChoice returns the currently selected menu choice
-func (m Model) SelectedChoice() *Choice {
-	return m.selected
-}
+// // SelectedChoice returns the currently selected menu choice
+// func (m Model) SelectedChoice() *Choice {
+// 	return m.selected
+// }
 
 // SetSize sets the size of the menu
 func (m *Model) SetSize(w tea.WindowSizeMsg) {
