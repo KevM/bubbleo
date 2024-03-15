@@ -50,7 +50,7 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 
 func (m Model) handleKeyMsg(keyMsg tea.KeyMsg, msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	if m.help.ShowAll {
+	if m.help.ShowAll && !key.Matches(keyMsg, DefaultKeyMap.Help) {
 		m.help.ShowAll = false // toggle help view
 		switch {               //override escape to only close help
 		case keyMsg.String() == tea.KeyEscape.String():
