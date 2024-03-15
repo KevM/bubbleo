@@ -39,9 +39,9 @@ type MenuStyles struct {
 
 type Model struct {
 	Choices []Choice
-	List    list.Model
 
 	delegate list.DefaultDelegate
+	list     list.Model
 	width    int
 	height   int
 	help.KeyMap
@@ -64,7 +64,7 @@ func New(title string, choices []Choice, selected *Choice) Model {
 	defaultHeight := 20
 
 	model := Model{
-		List:     list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
+		list:     list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
 		delegate: delegation,
 		keys:     DefaultKeyMap,
 		help:     help.New(),
@@ -72,23 +72,23 @@ func New(title string, choices []Choice, selected *Choice) Model {
 		height:   defaultHeight,
 	}
 
-	model.List.Styles.Title = styles.ListTitleStyle
-	model.List.Title = title
-	model.List.SetShowPagination(true)
-	model.List.SetShowTitle(true)
-	model.List.SetFilteringEnabled(false)
-	model.List.SetShowFilter(false)
-	model.List.SetShowStatusBar(false)
-	model.List.SetShowHelp(false)
+	model.list.Styles.Title = styles.ListTitleStyle
+	model.list.Title = title
+	model.list.SetShowPagination(true)
+	model.list.SetShowTitle(true)
+	model.list.SetFilteringEnabled(false)
+	model.list.SetShowFilter(false)
+	model.list.SetShowStatusBar(false)
+	model.list.SetShowHelp(false)
 
 	chooseKeyBinding := key.NewBinding(
 		key.WithKeys("enter"),
 		key.WithHelp("enter", "choose"),
 	)
-	model.List.AdditionalFullHelpKeys = func() []key.Binding {
+	model.list.AdditionalFullHelpKeys = func() []key.Binding {
 		return []key.Binding{chooseKeyBinding}
 	}
-	model.List.AdditionalShortHelpKeys = func() []key.Binding {
+	model.list.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{chooseKeyBinding}
 	}
 
@@ -113,16 +113,16 @@ func (m *Model) SetChoices(choices []Choice, selected *Choice) {
 		items[i] = choiceItem{title: choice.Title, desc: choice.Description, key: choice}
 	}
 
-	m.List.SetItems(items)
+	m.list.SetItems(items)
 	if selected != nil {
-		m.List.Select(selectedIndex)
+		m.list.Select(selectedIndex)
 	}
 }
 
 // SetStyles allows you to customize the styles used by the menu. This is mostly a passthrough
 // to the bubble/list component used by the menu.
 func (m Model) SetStyles(s MenuStyles) {
-	m.List.Styles.Title = s.ListTitleStyle
+	m.list.Styles.Title = s.ListTitleStyle
 	m.delegate.Styles = s.ListItemStyles
 }
 
@@ -137,7 +137,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// No selection made yet so update the list
 	var cmd tea.Cmd
-	m.List, cmd = m.List.Update(msg)
+	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
 
@@ -153,12 +153,12 @@ func (m Model) SelectChoice(choice Choice) (Model, tea.Cmd) {
 func (m *Model) SetSize(w tea.WindowSizeMsg) {
 	m.width = w.Width
 	m.height = w.Height
-	m.List.SetSize(w.Width, w.Height)
+	m.list.SetSize(w.Width, w.Height)
 	m.help.Width = w.Width
 }
 
 func (m *Model) SetShowTitle(display bool) {
-	m.List.SetShowTitle(display)
+	m.list.SetShowTitle(display)
 }
 
 // View renders the menu. When no choices are present, nothing is rendered.
@@ -166,13 +166,13 @@ func (m Model) View() string {
 	var help string
 	if m.help.ShowAll {
 		height := m.height - 5
-		m.List.SetSize(m.width, height)
+		m.list.SetSize(m.width, height)
 		help = styles.HelpStyle.Render(m.help.View(m.keys))
 	}
 
 	// display menu if choices are present.
 	if len(m.Choices) > 0 {
-		return "\n" + m.List.View() + help
+		return "\n" + m.list.View() + help
 	}
 
 	return ""

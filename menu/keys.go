@@ -66,13 +66,13 @@ func (m Model) handleKeyMsg(keyMsg tea.KeyMsg, msg tea.Msg) (tea.Model, tea.Cmd)
 	case key.Matches(keyMsg, DefaultKeyMap.Back):
 		return m, navstack.PopNavigationCmd()
 	case key.Matches(keyMsg, DefaultKeyMap.Select):
-		choice, ok := m.List.SelectedItem().(choiceItem)
+		choice, ok := m.list.SelectedItem().(choiceItem)
 		if ok {
 			return m.SelectChoice(choice.key)
 		}
 	default:
-		l, cmd := m.List.Update(msg)
-		m.List = l
+		l, cmd := m.list.Update(msg)
+		m.list = l
 		return m, cmd
 	}
 
