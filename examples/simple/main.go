@@ -77,7 +77,7 @@ func main() {
 		menu: menu.New(title, choices, nil),
 	}
 	s := shell.New()
-	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "Colors"})
+	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "🎨 Colors"})
 	p := tea.NewProgram(s, tea.WithAltScreen())
 
 	finalshell, err := p.Run()

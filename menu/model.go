@@ -75,7 +75,7 @@ func New(title string, choices []Choice, selected *Choice) Model {
 	model.List.Styles.Title = styles.ListTitleStyle
 	model.List.Title = title
 	model.List.SetShowPagination(true)
-	model.List.SetShowTitle(false)
+	model.List.SetShowTitle(true)
 	model.List.SetFilteringEnabled(false)
 	model.List.SetShowFilter(false)
 	model.List.SetShowStatusBar(false)
@@ -155,6 +155,10 @@ func (m *Model) SetSize(w tea.WindowSizeMsg) {
 	m.height = w.Height
 	m.List.SetSize(w.Width, w.Height)
 	m.help.Width = w.Width
+}
+
+func (m *Model) SetShowTitle(display bool) {
+	m.List.SetShowTitle(display)
 }
 
 // View renders the menu. When no choices are present, nothing is rendered.

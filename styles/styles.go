@@ -6,10 +6,7 @@ import (
 )
 
 var (
-	foregroundColor = lipgloss.AdaptiveColor{Light: "#343433", Dark: "#C1C6B2"}
-	backgroundColor = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#353533"}
-
-	ListTitleStyle       = lipgloss.NewStyle().MarginLeft(2).Background(backgroundColor).Foreground(foregroundColor).Bold(true)
-	BreadCrumbFrameStyle = lipgloss.NewStyle().Background(backgroundColor).Foreground(foregroundColor).Margin(1)
+	ListTitleStyle       = lipgloss.NewStyle().MarginLeft(2).Foreground(lipgloss.Color("230")).Bold(true)
+	BreadCrumbFrameStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("229")).Margin(1)
 	HelpStyle            = lipgloss.NewStyle().Padding(1, 2)
 )

@@ -13,7 +13,8 @@ import (
 )
 
 type BreadcrumbStyles struct {
-	Frame lipgloss.Style
+	Frame     lipgloss.Style
+	Delimiter string
 }
 
 type Model struct {
@@ -41,7 +42,7 @@ func (m Model) View() string {
 
 	for i, c := range m.Navstack.StackSummary() {
 		if i != 0 {
-			b.WriteString(" > ")
+			b.WriteString(m.Styles.Delimiter)
 		}
 		b.WriteString(c)
 	}
@@ -51,6 +52,7 @@ func (m Model) View() string {
 
 func DefaultStyles() BreadcrumbStyles {
 	return BreadcrumbStyles{
-		Frame: styles.BreadCrumbFrameStyle,
+		Frame:     styles.BreadCrumbFrameStyle,
+		Delimiter: " > ",
 	}
 }

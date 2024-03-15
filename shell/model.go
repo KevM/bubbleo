@@ -36,7 +36,7 @@ func New() Model {
 // Init determines the size of the widow used by the navigation stack.
 func (m Model) Init() tea.Cmd {
 
-	w, h := m.Breadcrumb.FrameStyle.GetFrameSize()
+	w, h := m.Breadcrumb.Styles.Frame.GetFrameSize()
 	m.window.SideOffset = w
 	m.window.TopOffset = h
 
@@ -51,6 +51,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the breadcrumb and the navigation stack.
 func (m Model) View() string {
+	m.Breadcrumb.Styles.Delimiter = " 🤳 "
 	bc := m.Breadcrumb.View()
 	nav := m.Navstack.View()
 	return lipgloss.NewStyle().Render(bc, nav)

@@ -29,7 +29,7 @@ func New(a data.Artist) Model {
 		choices = append(choices, choice)
 	}
 
-	title := fmt.Sprintf("Paintings by %s", a.Name)
+	title := fmt.Sprintf(" 🖼️  Paintings by %s", a.Name)
 	menu := menu.New(title, choices, nil)
 
 	return Model{

@@ -22,7 +22,6 @@ type model struct {
 	SelectedColor    string
 
 	menu menu.Model
-	// breadcrumb breadcrumb.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -51,7 +50,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	// bc := m.breadcrumb.View()
 	menu := m.menu.View()
 	return docStyle.Render(menu)
 }
@@ -68,24 +66,14 @@ func main() {
 		}
 	}
 
-	// maintop, mainside := docStyle.GetFrameSize()
-	// w := window.New(120, 25, maintop, mainside)
-	// ns := navstack.New(&w)
-
-	// Add the breadcrumb height to the top offset
-	// bc := breadcrumb.New(&ns)
-	// bctop, bcside := bc.FrameStyle.GetFrameSize()
-	// w.TopOffset += bctop
-	// w.SideOffset += bcside
-
 	title := "Choose an Artist:"
 	m := model{
 		menu: menu.New(title, choices, nil),
-		// breadcrumb: bc,
 	}
 
 	s := shell.New()
-	s.Navstack.Push(navstack.NavigationItem{Model: m, Title: "Artists"})
+	navItem := navstack.NavigationItem{Model: m, Title: "Artists"}
+	s.Navstack.Push(navItem)
 	p := tea.NewProgram(s, tea.WithAltScreen())
 
 	finalshell, err := p.Run()

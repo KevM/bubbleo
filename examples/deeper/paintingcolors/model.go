@@ -33,7 +33,7 @@ func New(painting data.Painting) Model {
 		choices = append(choices, choice)
 	}
 
-	title := fmt.Sprintf("Colors featured in %s", painting.Title)
+	title := fmt.Sprintf(" 🎨 Colors featured in %s", painting.Title)
 	menu := menu.New(title, choices, nil)
 
 	return Model{
