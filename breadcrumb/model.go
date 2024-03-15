@@ -12,15 +12,19 @@ import (
 	"github.com/kevm/bubbleo/styles"
 )
 
+type BreadcrumbStyles struct {
+	Frame lipgloss.Style
+}
+
 type Model struct {
-	Navstack   *navstack.Model
-	FrameStyle lipgloss.Style
+	Navstack *navstack.Model
+	Styles   BreadcrumbStyles
 }
 
 func New(n *navstack.Model) Model {
 	return Model{
-		Navstack:   n,
-		FrameStyle: styles.BreadCrumbFrameStyle.Copy().Height(1),
+		Navstack: n,
+		Styles:   DefaultStyles(),
 	}
 }
 
@@ -42,5 +46,11 @@ func (m Model) View() string {
 		b.WriteString(c)
 	}
 	crumbs := b.String()
-	return m.FrameStyle.Render(crumbs)
+	return m.Styles.Frame.Render(crumbs)
+}
+
+func DefaultStyles() BreadcrumbStyles {
+	return BreadcrumbStyles{
+		Frame: styles.BreadCrumbFrameStyle,
+	}
 }
