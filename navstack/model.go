@@ -48,8 +48,16 @@ func (m Model) Init() tea.Cmd {
 // Push pushes a new navigation item onto the stack.
 // The new navigation item is given a tea.WindowSizeMsg to ensure it's view can be presented correctly.
 // The item's Init method is called and resulting command is processed by [BubbleTea].
+// If top item's model implements the Closable interface the Close method is called.
 // This new item will be the top most item on the stack and thus will be rendered.
 func (m *Model) Push(item NavigationItem) tea.Cmd {
+
+	top := m.Top()
+	if top != nil {
+		if c, ok := top.Model.(Closable); ok {
+			c.Close()
+		}
+	}
 
 	wmsg := m.window.GetWindowSizeMsg()
 	nim, cmd := item.Model.Update(wmsg)
