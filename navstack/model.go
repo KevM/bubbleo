@@ -59,12 +59,14 @@ func (m *Model) Push(item NavigationItem) tea.Cmd {
 		}
 	}
 
+	initCmd := item.Init()
+
 	wmsg := m.window.GetWindowSizeMsg()
-	nim, cmd := item.Model.Update(wmsg)
+	nim, winCmd := item.Model.Update(wmsg)
 	item.Model = nim
 
 	m.stack = append(m.stack, item)
-	return tea.Batch(cmd, item.Init())
+	return tea.Sequence(initCmd, winCmd)
 }
 
 // Pop removes the top most navigation item from the stack.
@@ -87,12 +89,11 @@ func (m *Model) Pop() tea.Cmd {
 		return tea.Quit
 	}
 
-	cmds := []tea.Cmd{}
-	nim, cmd := top.Model.Update(m.window.GetWindowSizeMsg())
+	initCmd := top.Init()
+	nim, winCmd := top.Model.Update(m.window.GetWindowSizeMsg())
 	top.Model = nim
-	cmds = append(cmds, cmd, top.Init())
 
-	return tea.Batch(cmds...)
+	return tea.Sequence(winCmd, initCmd)
 }
 
 // Clear pops all the items from the stack.
