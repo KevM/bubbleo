@@ -20,7 +20,7 @@ jobs:
           go-version: 1.22.0
 
       - name: Build Examples
-        run: go build -o ./bin/deeper ./examples/deeper/*.go && go build -o ./bin/simple ./examples/simple/*.go
+        run: go build -o ./bin/deeper ./examples/deeper/*.go && go build -o ./bin/simple ./examples/simple/*.go && go build -o ./bin/hosted ./examples/hosted/*.go
 
       - name: Create deeper demo GIF
         uses: charmbracelet/vhs-action@v2
