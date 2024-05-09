@@ -11,6 +11,7 @@ import (
 	"errors"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/kevm/bubbleo/utils"
 	"github.com/kevm/bubbleo/window"
 )
 
@@ -21,19 +22,28 @@ type Closable interface {
 }
 
 type Model struct {
-	stack  []NavigationItem
-	window *window.Model
+	stack            []NavigationItem
+	window           *window.Model
+	quitonemptystack bool
 }
 
 // New creates a new navigation stack model. The window is used to
 // constrain the view within the container of the navigation stack.
 func New(w *window.Model) Model {
 	model := Model{
-		stack:  []NavigationItem{},
-		window: w,
+		stack:            []NavigationItem{},
+		window:           w,
+		quitonemptystack: true,
 	}
 
 	return model
+}
+
+// QuitOnEmptyStack determines if the application should quit when the stack is empty.
+// Default is true.
+func (m Model) QuitOnEmptyStack(quitonempty bool) Model {
+	m.quitonemptystack = quitonempty
+	return m
 }
 
 func (m Model) Init() tea.Cmd {
@@ -86,7 +96,10 @@ func (m *Model) Pop() tea.Cmd {
 	m.stack = m.stack[:len(m.stack)-1]
 	top = m.Top()
 	if top == nil {
-		return tea.Quit
+		if m.quitonemptystack {
+			return tea.Quit
+		}
+		return utils.Cmdize(m.window.GetWindowSizeMsg())
 	}
 
 	initCmd := top.Init()

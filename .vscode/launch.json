@@ -25,6 +25,17 @@
         "port": 2345,
         "host": "127.0.0.1",
         "preLaunchTask": "Run deeper headless dlv" // Here !
-      }
+      },
+      {
+          "name": "Attach to Hosted Example",
+          "type": "go",
+          "debugAdapter": "dlv-dap",
+          "request": "attach",
+          "mode": "remote",
+          "remotePath": "${workspaceFolder}/examples/hosted/",
+          "port": 2345,
+          "host": "127.0.0.1",
+          "preLaunchTask": "Run deeper headless dlv" // Here !
+        }
   ]
 }
