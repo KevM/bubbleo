@@ -42,6 +42,16 @@ jobs:
       - name: Move simple demo GIF to examples/simple
         run: mv demo.gif examples/simple/demo.gif 
 
+      - name: Create hosted demo GIF
+        uses: charmbracelet/vhs-action@v2
+        env:
+          TERM: xterm-256color
+        with:
+          path: ./examples/hosted/demo.tape
+      
+      - name: Move hosted demo GIF to examples/hosted
+        run: mv demo.gif examples/hosted/demo.gif 
+
       - name: Commit and push demo.gif
         uses: stefanzweifel/git-auto-commit-action@v4
         env:
