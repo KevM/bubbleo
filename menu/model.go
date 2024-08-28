@@ -49,8 +49,73 @@ type Model struct {
 	help help.Model
 }
 
+// Option is an optional [Model] configuration function.
+type Option func(*Model)
+
+// WithShowPagination returns an [Option]
+// whether the list shows pagination indictors.
+func WithShowPagination(show bool) Option {
+	return func(mod *Model) { mod.list.SetShowPagination(show) }
+}
+
+// WithShowTitle returns an [Option]
+// whether to show the list title.
+func WithShowTitle(show bool) Option {
+	return func(mod *Model) { mod.list.SetShowTitle(show) }
+}
+
+// WithFilteringEnabled returns an [Option]
+// whether the list allows filtering.
+func WithFilteringEnabled(enabled bool) Option {
+	return func(mod *Model) { mod.list.SetFilteringEnabled(enabled) }
+}
+
+// WithShowFilter returns an [Option]
+// whether the list shows the active filter.
+func WithShowFilter(show bool) Option {
+	return func(mod *Model) { mod.list.SetShowFilter(show) }
+}
+
+// WithShowStatusBar returns an [Option]
+// whether to show the list's status bar.
+func WithShowStatusBar(show bool) Option {
+	return func(mod *Model) { mod.list.SetShowStatusBar(show) }
+}
+
+// WithShowHelp returns an [Option]
+// whether to always show help for active keybindings.
+func WithShowHelp(show bool) Option {
+	return func(mod *Model) { mod.list.SetShowHelp(show) }
+}
+
+// WithAdditionalFullHelpKeys returns an [Option]
+// that replaces the lists's [list.Model.AdditionalFullHelpKeys].
+//
+// The list's current slice is passed as argument to the given keys function.
+// The keys function can then choose to return a new or modified slice.
+func WithAdditionalFullHelpKeys(keys func([]key.Binding) []key.Binding) Option {
+	return func(mod *Model) {
+		return func() []key.Binding {
+			return keys(mod.list.AdditionalFullHelpKeys)
+		}
+	}
+}
+
+// WithAdditionalShortHelpKeys returns an [Option]
+// that replaces the lists's [list.Model.AdditionalShortHelpKeys].
+//
+// The list's current slice is passed as argument to the given keys function.
+// The keys function can then choose to return a new or modified slice.
+func WithAdditionalShortHelpKeys(keys func([]key.Binding) []key.Binding) Option {
+	return func(mod *Model) {
+		return func() []key.Binding {
+			return keys(mod.list.AdditionalShortHelpKeys)
+		}
+	}
+}
+
 // New setups up a new menu model
-func New(title string, choices []Choice, selected *Choice) Model {
+func New(title string, choices []Choice, selected *Choice, options ...Option) Model {
 
 	styles := MenuStyles{
 		ListTitleStyle: styles.ListTitleStyle,
@@ -94,6 +159,10 @@ func New(title string, choices []Choice, selected *Choice) Model {
 
 	model.SetChoices(choices, selected)
 
+	for _, opt := range options {
+		opt(&model)
+	}
+
 	return model
 }
 
@@ -127,16 +196,20 @@ func (m Model) SetStyles(s MenuStyles) {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.SetSize(msg)
 	case tea.KeyMsg:
-		return m.handleKeyMsg(msg, msg)
+		// Make sure we do not trap keybindings required for editing filters.
+		// While editing, all messages should be forwarded on to [list.Model].
+		if !m.list.SettingFilter() {
+			if m, cmd = m.handleKeyMsg(msg, msg); cmd != nil {
+				return m, cmd
+			}
+		}
 	}
-
 	// No selection made yet so update the list
-	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
