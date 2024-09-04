@@ -95,8 +95,9 @@ func WithShowHelp(show bool) Option {
 // The keys function can then choose to return a new or modified slice.
 func WithAdditionalFullHelpKeys(keys func([]key.Binding) []key.Binding) Option {
 	return func(mod *Model) {
-		return func() []key.Binding {
-			return keys(mod.list.AdditionalFullHelpKeys)
+		prev := mod.list.AdditionalFullHelpKeys()
+		mod.list.AdditionalFullHelpKeys = func() []key.Binding {
+			return keys(prev)
 		}
 	}
 }
@@ -108,8 +109,9 @@ func WithAdditionalFullHelpKeys(keys func([]key.Binding) []key.Binding) Option {
 // The keys function can then choose to return a new or modified slice.
 func WithAdditionalShortHelpKeys(keys func([]key.Binding) []key.Binding) Option {
 	return func(mod *Model) {
-		return func() []key.Binding {
-			return keys(mod.list.AdditionalShortHelpKeys)
+		prev := mod.list.AdditionalShortHelpKeys()
+		mod.list.AdditionalShortHelpKeys = func() []key.Binding {
+			return keys(prev)
 		}
 	}
 }
@@ -196,7 +198,6 @@ func (m Model) SetStyles(s MenuStyles) {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.SetSize(msg)
@@ -204,12 +205,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Make sure we do not trap keybindings required for editing filters.
 		// While editing, all messages should be forwarded on to [list.Model].
 		if !m.list.SettingFilter() {
-			if m, cmd = m.handleKeyMsg(msg, msg); cmd != nil {
-				return m, cmd
+			if mod, cmd := m.handleKeyMsg(msg, msg); cmd != nil {
+				return mod, cmd
 			}
 		}
 	}
 	// No selection made yet so update the list
+	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
