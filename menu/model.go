@@ -45,8 +45,9 @@ type Model struct {
 	width    int
 	height   int
 	help.KeyMap
-	keys KeyMap
-	help help.Model
+	keys         KeyMap
+	help         help.Model
+	autoHideHelp bool
 }
 
 // New setups up a new menu model
@@ -64,12 +65,13 @@ func New(title string, choices []Choice, selected *Choice) Model {
 	defaultHeight := 20
 
 	model := Model{
-		list:     list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
-		delegate: delegation,
-		keys:     DefaultKeyMap,
-		help:     help.New(),
-		width:    defaultWidth,
-		height:   defaultHeight,
+		list:         list.New([]list.Item{}, delegation, defaultWidth, defaultHeight),
+		delegate:     delegation,
+		keys:         DefaultKeyMap,
+		help:         help.New(),
+		autoHideHelp: true,
+		width:        defaultWidth,
+		height:       defaultHeight,
 	}
 
 	model.list.Styles.Title = styles.ListTitleStyle
@@ -159,6 +161,14 @@ func (m *Model) SetSize(w tea.WindowSizeMsg) {
 
 func (m *Model) SetShowTitle(display bool) {
 	m.list.SetShowTitle(display)
+}
+
+func (m *Model) SetShowHelp(display bool) {
+	m.help.ShowAll = display
+}
+
+func (m *Model) SetAutoHideHelp(hide bool) {
+	m.autoHideHelp = hide
 }
 
 // View renders the menu. When no choices are present, nothing is rendered.
