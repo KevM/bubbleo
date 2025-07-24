@@ -51,7 +51,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the breadcrumb and the navigation stack.
 func (m Model) View() string {
-	m.Breadcrumb.Styles.Delimiter = " 🤳 "
 	bc := m.Breadcrumb.View()
 	nav := m.Navstack.View()
 	return lipgloss.NewStyle().Render(bc, nav)
